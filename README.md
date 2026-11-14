@@ -45,8 +45,16 @@ Hệ thống tự động biên dịch (compile), căn chỉnh (`zipalign`) và 
 # Kiểm tra cú pháp XML và sinh AndroidManifest.xml (không cần Android SDK)
 python3 scripts/build_overlays.py --validate-only
 
-# Build toàn bộ overlays ra thư mục dist/
+# Build toàn bộ overlays ra thư mục dist/ (mặc định build tất cả ngôn ngữ có trong overlays/)
 python3 scripts/build_overlays.py --out dist
+
+# Chỉ build Tiếng Việt (vi) hoặc tất cả ngôn ngữ (all)
+python3 scripts/build_overlays.py --lang-mode vi --out dist
+python3 scripts/build_overlays.py --lang-mode all --out dist
+
+# Đồng bộ XML từ Xiaomi.eu (Tiếng Việt hoặc tất cả ngôn ngữ)
+python3 scripts/sync_xml.py --lang Vietnamese
+python3 scripts/sync_xml.py --lang all
 
 # Build riêng một số overlay
 python3 scripts/build_overlays.py --only com.android.settings,com.miui.home --out dist
@@ -59,7 +67,8 @@ python3 scripts/build_overlays.py --keystore /path/to/my.keystore --keystore-pas
 
 ## GitHub Actions & Release
 
-- **Push / PR vào `main`**: tự động build và verify tất cả `.apk`, xuất ra mục **Artifacts** (`hyperos-cn-overlays`).
+- **Push / PR vào `main`**: tự động build (`vi`) và verify tất cả `.apk`, xuất ra mục **Artifacts** (`hyperos-cn-overlays-vi`).
+- **Run workflow (`workflow_dispatch`)**: chọn `language_mode` là `vi` (chỉ Tiếng Việt) hoặc `all` (tự động sync & build toàn bộ ngôn ngữ từ Xiaomi.eu).
 - **Push tag `v*`** (ví dụ `v1.0.0`) hoặc chạy **Run workflow** với `create_release: true`: tự động tạo GitHub Release đính kèm toàn bộ file `*.apk`.
 - Để ký bằng key riêng trên CI, thêm các GitHub Repository Secrets sau:
   - `KEYSTORE_BASE64`: nội dung file `.keystore` đã mã hóa base64

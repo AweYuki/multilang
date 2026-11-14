@@ -248,6 +248,23 @@ def run_cmd(cmd: list[str], label: str) -> None:
         raise RuntimeError(f"{label} failed (exit {proc.returncode}):\n{proc.stdout.strip()}")
 
 
+def stage_res_dir(res_dir: Path, work_dir: Path, lang_mode: str) -> Path:
+    if lang_mode == "all":
+        return res_dir
+
+    vi_pattern = re.compile(r"(?:^|-)vi(?:-|$)")
+    staged_res = work_dir / "res"
+    staged_res.mkdir(parents=True, exist_ok=True)
+    matched = 0
+    for child in res_dir.iterdir():
+        if child.is_dir() and vi_pattern.search(child.name):
+            shutil.copytree(child, staged_res / child.name, dirs_exist_ok=True)
+            matched += 1
+    if matched == 0:
+        raise ValueError(f"No Vietnamese (vi) resource directories found in {res_dir}")
+    return staged_res
+
+
 def build_single_overlay(
     overlay_dir: Path,
     config: dict,
@@ -256,17 +273,19 @@ def build_single_overlay(
     toolchain: Toolchain | None,
     keystore: KeystoreConfig | None,
     validate_only: bool,
+    lang_mode: str,
 ) -> Path | None:
     res_dir = overlay_dir / "res"
     if not res_dir.is_dir():
         raise ValueError(f"Missing res/ directory in {overlay_dir}")
 
-    validate_xml_tree(res_dir)
-
     work_dir = build_dir / overlay_dir.name
     if work_dir.exists():
         shutil.rmtree(work_dir)
     work_dir.mkdir(parents=True, exist_ok=True)
+
+    active_res_dir = stage_res_dir(res_dir, work_dir, lang_mode)
+    validate_xml_tree(active_res_dir)
 
     manifest_path = build_manifest_xml(overlay_dir, config, work_dir)
     if validate_only:
@@ -282,7 +301,7 @@ def build_single_overlay(
     target_sdk = str(config.get("targetSdk", 35))
 
     run_cmd(
-        [str(toolchain.aapt2), "compile", "--dir", str(res_dir), "-o", str(compiled_zip)],
+        [str(toolchain.aapt2), "compile", "--dir", str(active_res_dir), "-o", str(compiled_zip)],
         f"[{overlay_dir.name}] aapt2 compile",
     )
     run_cmd(
@@ -347,6 +366,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--key-alias", type=str, default=None, help="Signing key alias")
     parser.add_argument("--key-pass", type=str, default=None, help="Signing key password")
     parser.add_argument(
+        "--lang-mode",
+        choices=["vi", "all"],
+        default="all",
+        help="Language build mode: 'vi' (Vietnamese only) or 'all' (all languages in res/)",
+    )
+    parser.add_argument(
         "--validate-only",
         action="store_true",
         help="Validate XML resources and generate manifests without invoking Android SDK tools",
@@ -403,6 +428,7 @@ def main() -> int:
                 toolchain,
                 keystore,
                 args.validate_only,
+                args.lang_mode,
             ): ov_dir.name
             for ov_dir in overlay_dirs
         }

@@ -21,6 +21,14 @@ on:
       - ".github/workflows/build-overlays.yml"
   workflow_dispatch:
     inputs:
+      language_mode:
+        description: "Language mode: 'vi' (Vietnamese only) or 'all' (sync & build all languages)"
+        type: choice
+        options:
+          - vi
+          - all
+        required: true
+        default: "vi"
       overlays:
         description: "Comma-separated overlay folder names (leave empty to build all)"
         required: false
@@ -70,15 +78,20 @@ jobs:
             echo "KEYSTORE_PATH=build/release.keystore" >> "$GITHUB_ENV"
           fi
 
+      - name: Sync all languages from Xiaomi.eu (when language_mode is all)
+        if: ${{ (inputs.language_mode || 'vi') == 'all' }}
+        run: python3 scripts/sync_xml.py --lang all
+
       - name: Build overlay APKs
         env:
+          LANGUAGE_MODE: ${{ inputs.language_mode || 'vi' }}
           ONLY_OVERLAYS: ${{ inputs.overlays || '' }}
           COMPILE_SDK: ${{ inputs.compile_sdk || '35' }}
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASS: ${{ secrets.KEY_PASS }}
         run: |
-          ARGS=(--out dist --compile-sdk "$COMPILE_SDK")
+          ARGS=(--out dist --compile-sdk "$COMPILE_SDK" --lang-mode "$LANGUAGE_MODE")
           if [ -n "$ONLY_OVERLAYS" ]; then
             ARGS+=(--only "$ONLY_OVERLAYS")
           fi
@@ -95,7 +108,7 @@ jobs:
       - name: Upload overlay APKs artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hyperos-cn-overlays
+          name: hyperos-cn-overlays-${{ inputs.language_mode || 'vi' }}
           path: dist/*.apk
           if-no-files-found: error
 
