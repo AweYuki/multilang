@@ -34,12 +34,12 @@ on:
       batch_size:
         description: "Max strings per API request"
         required: false
-        default: "30"
+        default: "40"
         type: string
       workers:
-        description: "Parallel translation workers"
+        description: "Parallel translation workers (API max is 3)"
         required: false
-        default: "6"
+        default: "3"
         type: string
 
 permissions:
@@ -71,8 +71,8 @@ jobs:
           MODEL: ${{ inputs.model }}
           TARGET_LANG: ${{ inputs.target_lang }}
           PACKAGES: ${{ inputs.packages }}
-          BATCH_SIZE: ${{ inputs.batch_size || '30' }}
-          WORKERS: ${{ inputs.workers || '6' }}
+          BATCH_SIZE: ${{ inputs.batch_size || '40' }}
+          WORKERS: ${{ inputs.workers || '3' }}
         run: |
           ARGS=(--version "$ROM_VERSION" --target "$TARGET_LANG" --model "$MODEL" --batch-size "$BATCH_SIZE" --workers "$WORKERS")
           if [ -n "$PACKAGES" ]; then

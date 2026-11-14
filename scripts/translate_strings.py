@@ -65,7 +65,7 @@ def call_translate_api(
     target: str,
     model: str,
     timeout: int = 90,
-    max_retries: int = 2,
+    max_retries: int = 4,
 ) -> str:
     if not text.strip():
         return text
@@ -304,9 +304,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--target", default="vi", help="Target language (default: vi)")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="Model name (default: cx/gpt-6.1-sol)")
     parser.add_argument("--packages", default="", help="Comma-separated package names to translate")
-    parser.add_argument("--batch-size", type=int, default=30, help="Max strings per API request (default: 30)")
-    parser.add_argument("--max-batch-chars", type=int, default=3500, help="Max characters per batch (default: 3500)")
-    parser.add_argument("--workers", type=int, default=6, help="Parallel translation workers (default: 6)")
+    parser.add_argument("--batch-size", type=int, default=40, help="Max strings per API request (default: 40)")
+    parser.add_argument("--max-batch-chars", type=int, default=4500, help="Max characters per batch (default: 4500)")
+    parser.add_argument("--workers", type=int, default=3, help="Parallel translation workers (default: 3)")
     return parser.parse_args()
 
 
