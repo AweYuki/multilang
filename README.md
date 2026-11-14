@@ -78,7 +78,7 @@ python3 scripts/build_overlays.py --keystore /path/to/my.keystore --keystore-pas
   - Chọn **`version`** (`all` hoặc từng phiên bản `os4-a17`..`miui14`) và **`language_mode`** (`vi` hoặc `all`).
 - **Extract Untranslated Strings from ROM** (`.github/workflows/extract-rom-strings.yml`): nhập `rom_url` (link tải ROM `.zip` hoặc `.tgz`) và chọn `version` (`os4-a17`..`miui14`) để tự động tải ROM, unpack phân vùng, lưu string gốc vào `untranslated/<version>/` và lọc các chuỗi chưa dịch / có cập nhật vào `pending/<version>/`.
 - **Translate Pending Strings** (`.github/workflows/translate.yml`): dịch các chuỗi trong `pending/<version>/` qua `translate.hzzmonet.io.vn` (chọn `model`, mặc định `cx/gpt-6.1-sol`). Cần thêm Secret `TRANSLATE_API_TOKEN` trong GitHub Repo Settings. Nếu API lỗi giữa chừng, workflow vẫn tự commit cả phần đã dịch (`overlays/`) lẫn phần chưa dịch còn lại (`pending/`).
-- **Push tag `v*`** (ví dụ `v1.0.0`) hoặc chạy **Run workflow** với `create_release: true`: tự động tạo GitHub Release đính kèm toàn bộ file `*.apk`.
+- **Push vào `main` / tag `v*`** hoặc chạy **Run workflow** (`create_release` mặc định `true`): tự động tạo GitHub Release đính kèm file `.zip` theo từng phiên bản (và các file `*.apk` trực tiếp nếu build 1 phiên bản).
 - Để ký bằng key riêng trên CI, thêm các GitHub Repository Secrets sau:
   - `KEYSTORE_BASE64`: nội dung file `.keystore` đã mã hóa base64
   - `KEYSTORE_PASS`: mật khẩu keystore

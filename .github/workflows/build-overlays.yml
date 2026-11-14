@@ -72,7 +72,7 @@ on:
         description: "Create a GitHub Release with built APKs"
         type: boolean
         required: false
-        default: false
+        default: true
 
 permissions:
   contents: write
@@ -184,10 +184,27 @@ jobs:
           path: dist/**/*.apk
           if-no-files-found: error
 
+      - name: Prepare release assets
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.create_release)
+        env:
+          LANGUAGE_MODE: ${{ inputs.language_mode || 'vi' }}
+        run: |
+          mkdir -p release_assets
+          ver_count=$(find dist -mindepth 1 -maxdepth 1 -type d | wc -l)
+          for ver_dir in dist/*/; do
+            [ -d "$ver_dir" ] || continue
+            ver=$(basename "$ver_dir")
+            (cd "$ver_dir" && zip -q -r "../../release_assets/hyperos-cn-overlays-${ver}-${LANGUAGE_MODE}.zip" ./*.apk)
+            if [ "$ver_count" -eq 1 ]; then
+              cp "$ver_dir"*.apk release_assets/
+            fi
+          done
+
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v') || inputs.create_release == true
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.create_release)
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/**/*.apk
+          files: release_assets/*
           generate_release_notes: true
+          name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('Build #{0} ({1} / {2})', github.run_number, inputs.version || 'all', inputs.language_mode || 'vi') }}
           tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('build-{0}', github.run_number) }}
