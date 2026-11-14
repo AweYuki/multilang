@@ -211,7 +211,7 @@ def build_manifest_xml(overlay_dir: Path, config: dict, work_dir: Path) -> Path:
     priority = int(meta.get("priority", config.get("defaultPriority", 100)))
     is_static = bool(meta.get("isStatic", config.get("defaultIsStatic", True)))
     version_code = int(meta.get("versionCode", 1))
-    version_name = str(meta.get("versionName", "1.0"))
+    version_name = str(meta.get("versionName", config.get("defaultVersionName", "1.0")))
 
     overlay_attrs = [
         f"android:targetPackage={quoteattr(target_package)}",
@@ -356,7 +356,8 @@ def build_single_overlay(
     compiled_zip = work_dir / "compiled.zip"
     unaligned_apk = work_dir / "unaligned.apk"
     aligned_apk = work_dir / "aligned.apk"
-    out_apk = out_dir / f"{overlay_dir.name}.apk"
+    manifest_pkg = ET.parse(manifest_path).getroot().attrib.get("package") or overlay_dir.name
+    out_apk = out_dir / f"{manifest_pkg}.apk"
 
     min_sdk = str(config.get("minSdk", 33))
     target_sdk = str(config.get("targetSdk", 35))
