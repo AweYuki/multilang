@@ -11,10 +11,30 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import xml.etree.ElementTree as ET
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_REPO_URL = "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-4.0-XML-Global.git"
 INVALID_QUALIFIER_RE = re.compile(r"(?:^|-)(?:mcc|mnc)\d{4,}(?:-|$)")
+NON_STRING_REF_RE = re.compile(r"@(?:drawable|mipmap|anim|layout)/")
+
+
+def sanitize_values_xml(res_dir: Path) -> None:
+    """Remove non-translatable entries referencing internal drawables/layouts."""
+    for xml_file in res_dir.glob("values*/**/*.xml"):
+        try:
+            tree = ET.parse(xml_file)
+        except ET.ParseError:
+            continue
+        root = tree.getroot()
+        changed = False
+        for child in list(root):
+            if NON_STRING_REF_RE.search("".join(child.itertext())):
+                root.remove(child)
+                changed = True
+        if changed:
+            ET.indent(tree, space="    ")
+            tree.write(xml_file, encoding="utf-8", xml_declaration=True)
 
 
 def sparse_clone(repo_url: str, dest: Path, variants: list[str], lang: str) -> None:
@@ -71,6 +91,7 @@ def sync_overlays(
                 dirs_exist_ok=True,
                 ignore=lambda _dir, names: [n for n in names if INVALID_QUALIFIER_RE.search(n)],
             )
+            sanitize_values_xml(dst_res)
 
             meta_file = dst_overlay / "overlay.json"
             if not meta_file.is_file():
