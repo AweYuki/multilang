@@ -1,8 +1,0 @@
-{
-  "package": "com.miui.powerinsight",
-  "apkName": "PowerInsight.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml"
-  ]
-}

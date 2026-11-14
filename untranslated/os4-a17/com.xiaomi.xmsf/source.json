@@ -1,8 +1,0 @@
-{
-  "package": "com.xiaomi.xmsf",
-  "apkName": "split-XiaomiServiceFrameworkCN-master.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml"
-  ]
-}

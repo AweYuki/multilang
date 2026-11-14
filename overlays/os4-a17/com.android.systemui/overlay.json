@@ -1,5 +1,0 @@
-{
-  "targetPackage": "com.android.systemui",
-  "priority": 100,
-  "isStatic": true
-}

@@ -1,7 +1,0 @@
-{
-  "package": "com.qualcomm.qti.server.wigig.tethering.rro",
-  "apkName": "WigigTetheringRRO.apk",
-  "files": [
-    "arrays.xml"
-  ]
-}

@@ -1,7 +1,0 @@
-{
-  "package": "com.android.bluetoothmidiservice",
-  "apkName": "BluetoothMidiService.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

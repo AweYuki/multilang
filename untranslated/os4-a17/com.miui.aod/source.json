@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.aod",
-  "apkName": "MIUIAod.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

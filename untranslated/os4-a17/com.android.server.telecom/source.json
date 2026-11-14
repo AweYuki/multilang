@@ -1,9 +1,0 @@
-{
-  "package": "com.android.server.telecom",
-  "apkName": "Telecom.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

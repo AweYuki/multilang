@@ -1,8 +1,0 @@
-{
-  "package": "com.xiaomi.trustservice",
-  "apkName": "MiTrustService.apk",
-  "files": [
-    "strings.xml",
-    "plurals.xml"
-  ]
-}

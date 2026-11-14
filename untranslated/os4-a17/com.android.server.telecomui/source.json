@@ -1,7 +1,0 @@
-{
-  "package": "com.android.server.telecomui",
-  "apkName": "TelecomUi.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

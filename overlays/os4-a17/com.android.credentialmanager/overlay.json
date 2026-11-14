@@ -1,5 +1,0 @@
-{
-  "targetPackage": "com.android.credentialmanager",
-  "priority": 100,
-  "isStatic": true
-}

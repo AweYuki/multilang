@@ -1,9 +1,0 @@
-{
-  "package": "com.milink.service",
-  "apkName": "MiLinkOS4Cn.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

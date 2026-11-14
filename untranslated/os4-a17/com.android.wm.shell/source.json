@@ -1,9 +1,0 @@
-{
-  "package": "com.android.wm.shell",
-  "apkName": "MiuiWMShellResources-install.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

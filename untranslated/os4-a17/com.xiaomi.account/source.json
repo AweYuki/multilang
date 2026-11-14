@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.account",
-  "apkName": "MIUIXiaomiAccount.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

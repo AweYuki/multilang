@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.screenshot",
-  "apkName": "MIUIScreenshot.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

@@ -1,7 +1,0 @@
-{
-  "package": "com.qualcomm.qti.server.qtiwifi",
-  "apkName": "QtiWifiService.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.accessibility",
-  "apkName": "MIUIAccessibility.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

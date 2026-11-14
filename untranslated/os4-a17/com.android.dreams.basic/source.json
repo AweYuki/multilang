@@ -1,7 +1,0 @@
-{
-  "package": "com.android.dreams.basic",
-  "apkName": "BasicDreams.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

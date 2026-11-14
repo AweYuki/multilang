@@ -1,7 +1,0 @@
-{
-  "package": "com.android.pacprocessor",
-  "apkName": "PacProcessor.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

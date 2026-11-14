@@ -1,9 +1,0 @@
-{
-  "package": "com.android.settings",
-  "apkName": "Settings.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "package": "com.android.contacts",
-  "apkName": "MIUIContactsT.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

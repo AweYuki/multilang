@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.market",
-  "apkName": "MIUISuperMarket.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

@@ -1,7 +1,0 @@
-{
-  "package": "com.qualcomm.qti.ridemodeaudio",
-  "apkName": "RideModeAudio.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

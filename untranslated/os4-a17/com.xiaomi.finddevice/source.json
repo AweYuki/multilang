@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.finddevice",
-  "apkName": "MIUIFindDeviceCN.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

@@ -1,7 +1,0 @@
-{
-  "package": "com.xiaomi.app.toolbox",
-  "apkName": "Toolbox.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

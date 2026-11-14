@@ -1,7 +1,0 @@
-{
-  "package": "com.xiaomi.aireco",
-  "apkName": "XiaoaiRecommendation.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

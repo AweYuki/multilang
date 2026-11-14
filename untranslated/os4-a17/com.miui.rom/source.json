@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.rom",
-  "apkName": "framework-ext-res.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

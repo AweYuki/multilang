@@ -1,7 +1,0 @@
-{
-  "package": "com.qualcomm.qti.xrcb",
-  "apkName": "xrcbservice.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

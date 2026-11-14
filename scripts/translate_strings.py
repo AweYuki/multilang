@@ -29,7 +29,7 @@ from string_state import (
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_API_BASE = "https://translate.hzzmonet.io.vn/api/v1"
-DEFAULT_MODEL = "cx/gpt-6.1-sol"
+DEFAULT_MODEL = "cx/gpt-6-luna"
 MAX_FILE_BYTES = 9 * 1024 * 1024  # 9 MB safety margin under 10 MB limit
 TAG_BLOCK_RE = re.compile(r"\[\[(\d+)\]\]\s*(.*?)\s*\[\[/\1\]\]", re.DOTALL)
 CODE_FENCE_RE = re.compile(r"^```(?:xml)?\s*\n(.*?)\n```\s*$", re.DOTALL)

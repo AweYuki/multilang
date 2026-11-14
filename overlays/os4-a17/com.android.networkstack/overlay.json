@@ -1,5 +1,0 @@
-{
-  "targetPackage": "com.android.networkstack",
-  "priority": 100,
-  "isStatic": true
-}

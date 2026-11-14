@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.carlink",
-  "apkName": "CarWith.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

@@ -1,7 +1,0 @@
-{
-  "package": "com.qualcomm.qti.poweroffalarm",
-  "apkName": "PowerOffAlarm.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

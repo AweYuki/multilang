@@ -1,9 +1,0 @@
-{
-  "package": "com.android.incallui",
-  "apkName": "InCallUI.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

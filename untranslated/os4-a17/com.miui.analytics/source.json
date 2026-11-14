@@ -1,7 +1,0 @@
-{
-  "package": "com.miui.analytics",
-  "apkName": "AnalyticsCore.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

@@ -1,8 +1,0 @@
-{
-  "package": "com.google.android.webview",
-  "apkName": "WebViewGoogle64.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml"
-  ]
-}

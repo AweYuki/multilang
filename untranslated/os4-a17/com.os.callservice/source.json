@@ -1,9 +1,0 @@
-{
-  "package": "com.os.callservice",
-  "apkName": "VoipServiceKit.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

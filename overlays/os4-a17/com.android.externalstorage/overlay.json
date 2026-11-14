@@ -1,5 +1,0 @@
-{
-  "targetPackage": "com.android.externalstorage",
-  "priority": 100,
-  "isStatic": true
-}

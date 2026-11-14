@@ -1,9 +1,0 @@
-{
-  "package": "com.android.wallpaper.livepicker",
-  "apkName": "LiveWallpapersPicker.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

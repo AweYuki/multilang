@@ -1,7 +1,0 @@
-{
-  "package": "com.android.backupconfirm",
-  "apkName": "BackupRestoreConfirmation.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

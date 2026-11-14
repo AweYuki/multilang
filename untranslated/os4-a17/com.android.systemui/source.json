@@ -1,9 +1,0 @@
-{
-  "package": "com.android.systemui",
-  "apkName": "MiuiSystemUI.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

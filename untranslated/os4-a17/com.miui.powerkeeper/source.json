@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.powerkeeper",
-  "apkName": "PowerKeeper.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

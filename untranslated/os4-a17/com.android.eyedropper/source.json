@@ -1,7 +1,0 @@
-{
-  "package": "com.android.eyedropper",
-  "apkName": "EyeDropper.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

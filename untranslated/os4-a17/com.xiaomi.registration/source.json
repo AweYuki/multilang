@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.registration",
-  "apkName": "AutoRegistration.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

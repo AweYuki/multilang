@@ -1,5 +1,0 @@
-{
-  "targetPackage": "com.xiaomi.mi_connect_service",
-  "priority": 100,
-  "isStatic": true
-}

@@ -1,7 +1,0 @@
-{
-  "package": "com.tencent.soter.soterserver",
-  "apkName": "SoterService.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

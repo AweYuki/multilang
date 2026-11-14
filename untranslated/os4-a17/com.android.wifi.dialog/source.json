@@ -1,9 +1,0 @@
-{
-  "package": "com.android.wifi.dialog",
-  "apkName": "MiuiWifiDialog.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

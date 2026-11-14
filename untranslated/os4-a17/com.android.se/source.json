@@ -1,7 +1,0 @@
-{
-  "package": "com.android.se",
-  "apkName": "SecureElement.apk",
-  "files": [
-    "arrays.xml"
-  ]
-}

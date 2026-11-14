@@ -1,8 +1,0 @@
-{
-  "package": "com.android.traceur",
-  "apkName": "Traceur.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml"
-  ]
-}

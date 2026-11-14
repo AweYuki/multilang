@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.aiasst.service",
-  "apkName": "MIUIAiasstService.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

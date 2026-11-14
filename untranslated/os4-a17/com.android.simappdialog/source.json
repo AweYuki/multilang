@@ -1,7 +1,0 @@
-{
-  "package": "com.android.simappdialog",
-  "apkName": "SimAppDialog.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

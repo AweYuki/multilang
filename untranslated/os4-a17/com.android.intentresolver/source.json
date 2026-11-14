@@ -1,9 +1,0 @@
-{
-  "package": "com.android.intentresolver",
-  "apkName": "MiIntentResolver.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

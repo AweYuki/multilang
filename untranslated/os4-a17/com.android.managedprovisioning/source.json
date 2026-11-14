@@ -1,8 +1,0 @@
-{
-  "package": "com.android.managedprovisioning",
-  "apkName": "ManagedProvisioning.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml"
-  ]
-}

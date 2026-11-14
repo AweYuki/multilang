@@ -1,9 +1,0 @@
-{
-  "package": "com.android.camera",
-  "apkName": "MiuiCamera.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

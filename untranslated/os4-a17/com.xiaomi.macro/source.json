@@ -1,8 +1,0 @@
-{
-  "package": "com.xiaomi.macro",
-  "apkName": "com.xiaomi.macro.apk",
-  "files": [
-    "strings.xml",
-    "plurals.xml"
-  ]
-}

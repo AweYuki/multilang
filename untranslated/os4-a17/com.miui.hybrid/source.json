@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.hybrid",
-  "apkName": "HybridPlatform.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

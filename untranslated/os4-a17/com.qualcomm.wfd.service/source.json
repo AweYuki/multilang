@@ -1,7 +1,0 @@
-{
-  "package": "com.qualcomm.wfd.service",
-  "apkName": "WfdService.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

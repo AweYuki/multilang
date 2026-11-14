@@ -1,7 +1,0 @@
-{
-  "package": "com.qualcomm.qti.xrwifi",
-  "apkName": "xrwifiservice.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

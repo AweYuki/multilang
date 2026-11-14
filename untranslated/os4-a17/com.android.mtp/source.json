@@ -1,7 +1,0 @@
-{
-  "package": "com.android.mtp",
-  "apkName": "MtpService.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

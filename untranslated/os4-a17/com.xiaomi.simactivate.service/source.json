@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.simactivate.service",
-  "apkName": "XiaomiSimActivateServiceCn.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

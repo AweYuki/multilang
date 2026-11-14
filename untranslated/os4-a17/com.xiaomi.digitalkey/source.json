@@ -1,7 +1,0 @@
-{
-  "package": "com.xiaomi.digitalkey",
-  "apkName": "digitalkey.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

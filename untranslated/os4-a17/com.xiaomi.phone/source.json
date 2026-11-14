@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.phone",
-  "apkName": "HyperPhone.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

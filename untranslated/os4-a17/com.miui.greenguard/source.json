@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.greenguard",
-  "apkName": "MIUIgreenguard.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

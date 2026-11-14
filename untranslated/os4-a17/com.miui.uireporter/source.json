@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.uireporter",
-  "apkName": "MIUIReporter.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

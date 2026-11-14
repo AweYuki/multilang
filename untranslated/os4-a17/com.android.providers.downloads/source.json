@@ -1,9 +1,0 @@
-{
-  "package": "com.android.providers.downloads",
-  "apkName": "DownloadProvider.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

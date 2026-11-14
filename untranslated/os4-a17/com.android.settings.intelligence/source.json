@@ -1,7 +1,0 @@
-{
-  "package": "com.android.settings.intelligence",
-  "apkName": "SettingsIntelligence.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

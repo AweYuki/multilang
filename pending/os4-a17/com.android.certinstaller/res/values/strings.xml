@@ -1,4 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="config_system_install_component">com.android.settings/com.android.settings.security.CredentialStorage</string>
-</resources>

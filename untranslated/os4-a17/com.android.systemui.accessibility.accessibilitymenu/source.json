@@ -1,7 +1,0 @@
-{
-  "package": "com.android.systemui.accessibility.accessibilitymenu",
-  "apkName": "AccessibilityMenu.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

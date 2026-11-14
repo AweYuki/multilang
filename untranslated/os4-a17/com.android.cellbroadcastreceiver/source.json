@@ -1,9 +1,0 @@
-{
-  "package": "com.android.cellbroadcastreceiver",
-  "apkName": "CellBroadcastAppPlatform.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

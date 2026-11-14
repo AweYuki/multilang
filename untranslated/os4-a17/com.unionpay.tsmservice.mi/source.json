@@ -1,7 +1,0 @@
-{
-  "package": "com.unionpay.tsmservice.mi",
-  "apkName": "UPTsmService.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

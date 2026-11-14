@@ -1,9 +1,0 @@
-{
-  "package": "com.google.android.accessibility.switchaccess",
-  "apkName": "SwitchAccess.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

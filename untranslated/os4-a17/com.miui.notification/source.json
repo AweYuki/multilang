@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.notification",
-  "apkName": "MIUINotificationCenter.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

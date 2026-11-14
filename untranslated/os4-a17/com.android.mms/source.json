@@ -1,9 +1,0 @@
-{
-  "package": "com.android.mms",
-  "apkName": "MiuiMms.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "package": "com.newcall",
-  "apkName": "NewCall.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

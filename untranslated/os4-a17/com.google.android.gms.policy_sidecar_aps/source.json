@@ -1,9 +1,0 @@
-{
-  "package": "com.google.android.gms.policy_sidecar_aps",
-  "apkName": "AndroidPlatformServices.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.misound",
-  "apkName": "MiSound.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

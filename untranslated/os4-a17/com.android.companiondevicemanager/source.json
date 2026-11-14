@@ -1,7 +1,0 @@
-{
-  "package": "com.android.companiondevicemanager",
-  "apkName": "CompanionDeviceManager.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

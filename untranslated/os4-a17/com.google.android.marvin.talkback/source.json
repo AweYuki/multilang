@@ -1,9 +1,0 @@
-{
-  "package": "com.google.android.marvin.talkback",
-  "apkName": "talkback.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

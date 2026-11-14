@@ -1,7 +1,0 @@
-{
-  "package": "com.android.cameraextensions",
-  "apkName": "CameraExtensionsProxy.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

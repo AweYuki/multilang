@@ -1,7 +1,0 @@
-{
-  "package": "com.android.bips",
-  "apkName": "BuiltInPrintService.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

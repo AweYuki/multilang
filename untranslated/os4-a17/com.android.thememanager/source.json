@@ -1,9 +1,0 @@
-{
-  "package": "com.android.thememanager",
-  "apkName": "MIUIThemeManager.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

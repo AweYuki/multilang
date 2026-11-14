@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.aiasst.vision",
-  "apkName": "AiasstVision.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

@@ -1,7 +1,0 @@
-{
-  "package": "com.android.musicfx",
-  "apkName": "MusicFX.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

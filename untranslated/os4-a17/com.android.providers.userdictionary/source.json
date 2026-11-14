@@ -1,7 +1,0 @@
-{
-  "package": "com.android.providers.userdictionary",
-  "apkName": "UserDictionaryProvider.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

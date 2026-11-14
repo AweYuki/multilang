@@ -1,7 +1,0 @@
-{
-  "package": "com.android.modulemetadata",
-  "apkName": "ModuleMetadata.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

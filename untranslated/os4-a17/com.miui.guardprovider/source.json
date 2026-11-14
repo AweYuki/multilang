@@ -1,8 +1,0 @@
-{
-  "package": "com.miui.guardprovider",
-  "apkName": "MIUIGuardProvider.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml"
-  ]
-}

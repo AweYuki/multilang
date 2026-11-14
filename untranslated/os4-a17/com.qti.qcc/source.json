@@ -1,7 +1,0 @@
-{
-  "package": "com.qti.qcc",
-  "apkName": "QCC.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

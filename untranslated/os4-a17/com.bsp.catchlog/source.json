@@ -1,7 +1,0 @@
-{
-  "package": "com.bsp.catchlog",
-  "apkName": "CatchLog.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

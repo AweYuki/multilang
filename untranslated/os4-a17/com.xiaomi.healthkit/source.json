@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.healthkit",
-  "apkName": "Healthkit.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

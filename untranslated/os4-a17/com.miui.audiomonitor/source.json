@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.audiomonitor",
-  "apkName": "MiuiAudioMonitor.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

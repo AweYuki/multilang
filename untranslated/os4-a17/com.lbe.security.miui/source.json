@@ -1,9 +1,0 @@
-{
-  "package": "com.lbe.security.miui",
-  "apkName": "AuthManager.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

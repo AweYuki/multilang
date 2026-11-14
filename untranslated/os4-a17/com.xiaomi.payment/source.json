@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.payment",
-  "apkName": "PaymentService.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

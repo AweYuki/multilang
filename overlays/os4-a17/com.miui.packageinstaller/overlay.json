@@ -1,5 +1,0 @@
-{
-  "targetPackage": "com.miui.packageinstaller",
-  "priority": 100,
-  "isStatic": true
-}

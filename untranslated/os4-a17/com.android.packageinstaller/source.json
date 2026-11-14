@@ -1,7 +1,0 @@
-{
-  "package": "com.android.packageinstaller",
-  "apkName": "PackageInstaller.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

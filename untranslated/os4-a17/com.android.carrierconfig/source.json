@@ -1,7 +1,0 @@
-{
-  "package": "com.android.carrierconfig",
-  "apkName": "CarrierConfig.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.securitycenter",
-  "apkName": "MIUISecurityCenter.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

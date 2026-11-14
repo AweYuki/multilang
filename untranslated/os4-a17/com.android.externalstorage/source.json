@@ -1,7 +1,0 @@
-{
-  "package": "com.android.externalstorage",
-  "apkName": "ExternalStorageProvider.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

@@ -1,7 +1,0 @@
-{
-  "package": "com.android.proxyhandler",
-  "apkName": "ProxyHandler.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

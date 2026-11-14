@@ -1,9 +1,0 @@
-{
-  "package": "android",
-  "apkName": "framework-res.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

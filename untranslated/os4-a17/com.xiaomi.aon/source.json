@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.aon",
-  "apkName": "MiAONServiceW.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

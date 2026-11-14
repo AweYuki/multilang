@@ -1,7 +1,0 @@
-{
-  "package": "com.xiaomi.cameramind",
-  "apkName": "CameraMind.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

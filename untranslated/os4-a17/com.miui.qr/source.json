@@ -1,7 +1,0 @@
-{
-  "package": "com.miui.qr",
-  "apkName": "DeviceInfoQR.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

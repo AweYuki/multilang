@@ -1,0 +1,117 @@
+name: Sync Xiaomi.eu XML Sources
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "ROM version to sync ('all' syncs miui14 through os4-a17)"
+        type: choice
+        options:
+          - all
+          - os4-a17
+          - os3-a16
+          - os3-a15
+          - os2-a15
+          - os2-a14
+          - os1-a14
+          - os1-a13
+          - miui14
+        required: true
+        default: "all"
+      lang:
+        description: "Language folder in Xiaomi.eu repo ('all' for all languages, or e.g. Vietnamese)"
+        required: true
+        default: "all"
+        type: string
+      commit_to_repo:
+        description: "Commit and push synced XMLs to sources/xiaomi-eu/"
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Sync Xiaomi.eu XML sources
+        env:
+          TARGET_VERSION: ${{ inputs.version || 'all' }}
+          SYNC_LANG: ${{ inputs.lang || 'all' }}
+        run: |
+          set -euo pipefail
+
+          sync_one() {
+            local ver="$1"
+            local repo="$2"
+            local variants="$3"
+            echo "::group::Syncing ${ver} (${SYNC_LANG}) from ${repo} [${variants}]"
+            python3 scripts/sync_xml.py \
+              --repo-url "$repo" \
+              --overlays-dir sources/xiaomi-eu \
+              --version "$ver" \
+              --variants "$variants" \
+              --lang "$SYNC_LANG"
+            echo "::endgroup::"
+          }
+
+          if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "miui14" ]; then
+            sync_one "miui14" "https://github.com/butinhi/MIUI-14-XML-Vietnamese.git" "."
+          fi
+          if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os1-a13" ]; then
+            sync_one "os1-a13" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-1.0-XML-Global.git" "qcom-sdk33,mtk-sdk33"
+          fi
+          if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os1-a14" ]; then
+            sync_one "os1-a14" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-1.0-XML-Global.git" "qcom-sdk34,mtk-sdk34"
+          fi
+          if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os2-a14" ]; then
+            sync_one "os2-a14" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-2.0-XML-Global.git" "qcom-sdk34,mtk-sdk34"
+          fi
+          if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os2-a15" ]; then
+            sync_one "os2-a15" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-2.0-XML-Global.git" "qcom-sdk35,mtk-sdk35"
+          fi
+          if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os3-a15" ]; then
+            sync_one "os3-a15" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-3.0-XML-Global.git" "qcom-sdk35"
+          fi
+          if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os3-a16" ]; then
+            sync_one "os3-a16" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-3.0-XML-Global.git" "qcom-sdk36,mtk-sdk36"
+          fi
+          if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os4-a17" ]; then
+            sync_one "os4-a17" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-4.0-XML-Global.git" "qcom-sdk37,mtk-sdk37"
+          fi
+
+      - name: Validate synced overlays
+        env:
+          TARGET_VERSION: ${{ inputs.version || 'all' }}
+        run: |
+          python3 scripts/build_overlays.py \
+            --validate-only \
+            --overlays-dir sources/xiaomi-eu \
+            --version "$TARGET_VERSION"
+
+      - name: Commit and push synced sources
+        if: ${{ inputs.commit_to_repo }}
+        env:
+          TARGET_VERSION: ${{ inputs.version || 'all' }}
+          SYNC_LANG: ${{ inputs.lang || 'all' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sources/xiaomi-eu
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: sync Xiaomi.eu XML sources (${TARGET_VERSION}, lang=${SYNC_LANG})"
+          git push

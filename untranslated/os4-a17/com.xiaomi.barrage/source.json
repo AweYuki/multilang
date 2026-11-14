@@ -1,8 +1,0 @@
-{
-  "package": "com.xiaomi.barrage",
-  "apkName": "MiuiBarrage.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml"
-  ]
-}

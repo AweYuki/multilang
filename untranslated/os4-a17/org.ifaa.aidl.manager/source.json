@@ -1,7 +1,0 @@
-{
-  "package": "org.ifaa.aidl.manager",
-  "apkName": "IFAAService.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

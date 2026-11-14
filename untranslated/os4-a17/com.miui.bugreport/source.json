@@ -1,9 +1,0 @@
-{
-  "package": "com.miui.bugreport",
-  "apkName": "MiBugReportOS4.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

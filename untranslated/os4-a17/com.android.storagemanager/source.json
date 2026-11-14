@@ -1,9 +1,0 @@
-{
-  "package": "com.android.storagemanager",
-  "apkName": "StorageManager.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

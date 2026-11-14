@@ -1,8 +1,0 @@
-{
-  "package": "com.miui.securityinputmethod",
-  "apkName": "MIUISecurityInputMethod.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml"
-  ]
-}

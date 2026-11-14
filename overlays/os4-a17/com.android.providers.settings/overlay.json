@@ -1,5 +1,0 @@
-{
-  "targetPackage": "com.android.providers.settings",
-  "priority": 100,
-  "isStatic": true
-}

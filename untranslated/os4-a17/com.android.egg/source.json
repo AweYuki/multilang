@@ -1,8 +1,0 @@
-{
-  "package": "com.android.egg",
-  "apkName": "EasterEgg.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml"
-  ]
-}

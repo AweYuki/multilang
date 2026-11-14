@@ -1,9 +1,0 @@
-{
-  "package": "com.xiaomi.mi_connect_service",
-  "apkName": "mi_connect_service.apk",
-  "files": [
-    "strings.xml",
-    "arrays.xml",
-    "plurals.xml"
-  ]
-}

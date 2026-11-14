@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">logProvider</string>
-    <string name="movable_contacts_count">"{contacts_count, plural, =1 {# existing contact to ensure it's} other {# existing contacts to ensure they're} }"</string>
-    <string name="move_contacts_to_default_account_dialog_cancel_button_text">"Don't sync"</string>
-    <string name="move_contacts_to_default_account_dialog_message">You can sync %1$s backed up to %2$s (%3$s)</string>
-    <string name="move_contacts_to_default_account_dialog_sync_button_text">Sync</string>
-    <string name="move_contacts_to_default_account_dialog_title">Sync existing contacts?</string>
-</resources>

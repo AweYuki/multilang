@@ -1,7 +1,0 @@
-{
-  "package": "com.qualcomm.qti.services.systemhelper",
-  "apkName": "com.qualcomm.qti.services.systemhelper.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

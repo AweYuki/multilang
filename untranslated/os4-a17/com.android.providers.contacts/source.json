@@ -1,7 +1,0 @@
-{
-  "package": "com.android.providers.contacts",
-  "apkName": "ContactsProvider.apk",
-  "files": [
-    "strings.xml"
-  ]
-}

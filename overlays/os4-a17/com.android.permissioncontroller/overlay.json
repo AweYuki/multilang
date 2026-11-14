@@ -1,5 +1,0 @@
-{
-  "targetPackage": "com.android.permissioncontroller",
-  "priority": 100,
-  "isStatic": true
-}
