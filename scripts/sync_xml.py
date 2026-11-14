@@ -160,7 +160,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--repo-url", default=DEFAULT_REPO_URL, help="Source Git repository URL")
     parser.add_argument("--source-dir", type=Path, default=None, help="Use an existing local clone instead of cloning")
     parser.add_argument("--package-map", type=Path, default=ROOT_DIR / "package_map.json", help="Path to package_map.json")
-    parser.add_argument("--overlays-dir", type=Path, default=ROOT_DIR / "overlays", help="Destination overlays directory")
+    parser.add_argument("--overlays-dir", type=Path, default=ROOT_DIR / "overlays", help="Destination overlays root directory")
+    parser.add_argument("--version", default="os4-a17", help="Target ROM version subfolder under overlays/ (e.g. os4-a17)")
     parser.add_argument("--variants", default="qcom-sdk37,mtk-sdk37", help="Comma-separated priority list of variants")
     parser.add_argument("--lang", default="Vietnamese", help="Language folder name in Xiaomi.eu repo (or 'all')")
     parser.add_argument("--no-clean", action="store_true", help="Do not remove existing res/ before copying")
@@ -175,12 +176,13 @@ def main() -> int:
 
     package_map: dict[str, str] = json.loads(args.package_map.read_text(encoding="utf-8"))
     variants = [v.strip() for v in args.variants.split(",") if v.strip()]
-    args.overlays_dir.mkdir(parents=True, exist_ok=True)
+    target_overlays_dir = args.overlays_dir / args.version if args.version else args.overlays_dir
+    target_overlays_dir.mkdir(parents=True, exist_ok=True)
 
     if args.source_dir is not None:
         synced, unmapped = sync_overlays(
             args.source_dir,
-            args.overlays_dir,
+            target_overlays_dir,
             package_map,
             variants,
             args.lang,
@@ -192,14 +194,14 @@ def main() -> int:
             sparse_clone(args.repo_url, clone_dir, variants, args.lang)
             synced, unmapped = sync_overlays(
                 clone_dir,
-                args.overlays_dir,
+                target_overlays_dir,
                 package_map,
                 variants,
                 args.lang,
                 clean=not args.no_clean,
             )
 
-    print(f"Synced {len(synced)} overlay(s) for {args.lang}:")
+    print(f"Synced {len(synced)} overlay(s) for {args.lang} into {target_overlays_dir}:")
     for item in synced:
         print(f"  + {item}")
 

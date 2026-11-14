@@ -86,6 +86,16 @@ def resolve_toolchain(compile_sdk: int) -> Toolchain:
         candidate_jar = sdk_root / "platforms" / f"android-{compile_sdk}" / "android.jar"
         if candidate_jar.is_file():
             android_jar = candidate_jar
+        else:
+            platforms_dir = sdk_root / "platforms"
+            if platforms_dir.is_dir():
+                platforms = sorted(
+                    (d for d in platforms_dir.iterdir() if d.is_dir() and (d / "android.jar").is_file()),
+                    key=lambda d: parse_version_tuple(d.name),
+                    reverse=True,
+                )
+                if platforms:
+                    android_jar = platforms[0] / "android.jar"
 
     missing = []
     if not aapt2:
@@ -366,6 +376,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--key-alias", type=str, default=None, help="Signing key alias")
     parser.add_argument("--key-pass", type=str, default=None, help="Signing key password")
     parser.add_argument(
+        "--version",
+        type=str,
+        default="all",
+        help="ROM version subfolder under overlays/ to build (e.g. os4-a17, miui14, or 'all')",
+    )
+    parser.add_argument(
         "--lang-mode",
         choices=["vi", "all"],
         default="all",
@@ -393,25 +409,60 @@ def main() -> int:
         print(f"Error: overlays directory not found: {args.overlays_dir}", file=sys.stderr)
         return 1
 
-    overlay_dirs = sorted(d for d in args.overlays_dir.iterdir() if d.is_dir() and not d.name.startswith("."))
-    if args.only.strip():
-        wanted = {item.strip() for item in args.only.split(",") if item.strip()}
-        overlay_dirs = [d for d in overlay_dirs if d.name in wanted]
-        missing = wanted - {d.name for d in overlay_dirs}
-        if missing:
-            print(f"Error: requested overlays not found: {', '.join(sorted(missing))}", file=sys.stderr)
+    configured_versions: dict = config.get("versions", {})
+    if args.version == "all":
+        version_names = [
+            d.name
+            for d in sorted(args.overlays_dir.iterdir())
+            if d.is_dir() and not d.name.startswith(".")
+        ]
+        # Support flat overlays/<pkg>/res layout if no version dirs exist
+        if not version_names:
+            print("No version directories found under overlays/.", file=sys.stderr)
             return 1
+    else:
+        version_names = [v.strip() for v in args.version.split(",") if v.strip()]
 
-    if not overlay_dirs:
+    tasks: list[tuple[str, Path, dict, Path, Path]] = []
+    for ver in version_names:
+        ver_dir = args.overlays_dir / ver
+        if not ver_dir.is_dir():
+            print(f"Error: version directory not found: {ver_dir}", file=sys.stderr)
+            return 1
+        overlay_dirs = sorted(
+            d for d in ver_dir.iterdir()
+            if d.is_dir() and not d.name.startswith(".") and (d / "res").is_dir()
+        )
+        if args.only.strip():
+            wanted = {item.strip() for item in args.only.split(",") if item.strip()}
+            overlay_dirs = [d for d in overlay_dirs if d.name in wanted]
+        if not overlay_dirs:
+            if args.version != "all":
+                print(f"[SKIP] No overlays found in {ver_dir}")
+            continue
+
+        ver_config = dict(config)
+        ver_config.update(configured_versions.get(ver, {}))
+        if args.compile_sdk is not None:
+            ver_config["compileSdk"] = args.compile_sdk
+
+        ver_build_dir = args.build_dir / ver
+        ver_out_dir = args.out / ver
+        for ov_dir in overlay_dirs:
+            tasks.append((ver, ov_dir, ver_config, ver_build_dir, ver_out_dir))
+
+    if not tasks:
         print("No overlays found to build.", file=sys.stderr)
         return 1
 
     toolchain: Toolchain | None = None
     keystore: KeystoreConfig | None = None
     if not args.validate_only:
-        toolchain = resolve_toolchain(int(config.get("compileSdk", 35)))
+        default_compile_sdk = int(tasks[0][2].get("compileSdk", 35))
+        toolchain = resolve_toolchain(default_compile_sdk)
         keystore = ensure_keystore(args.build_dir, args)
-        args.out.mkdir(parents=True, exist_ok=True)
+        for _, _, _, _, ver_out_dir in tasks:
+            ver_out_dir.mkdir(parents=True, exist_ok=True)
     else:
         args.build_dir.mkdir(parents=True, exist_ok=True)
 
@@ -422,15 +473,15 @@ def main() -> int:
             pool.submit(
                 build_single_overlay,
                 ov_dir,
-                config,
-                args.build_dir,
-                args.out,
+                ver_config,
+                ver_build_dir,
+                ver_out_dir,
                 toolchain,
                 keystore,
                 args.validate_only,
                 args.lang_mode,
-            ): ov_dir.name
-            for ov_dir in overlay_dirs
+            ): f"{ver}/{ov_dir.name}"
+            for ver, ov_dir, ver_config, ver_build_dir, ver_out_dir in tasks
         }
         for fut in as_completed(futures):
             name = futures[fut]
@@ -451,7 +502,7 @@ def main() -> int:
         return 1
 
     if args.validate_only:
-        print(f"Validated {len(overlay_dirs)} overlay(s) successfully.")
+        print(f"Validated {len(tasks)} overlay(s) successfully.")
     else:
         print(f"Built {len(built)} overlay APK(s) in {args.out}")
     return 0

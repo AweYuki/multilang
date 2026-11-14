@@ -4,5 +4,16 @@
   "targetSdk": 35,
   "overlayPackagePrefix": "com.aweyuki.multilang",
   "defaultPriority": 100,
-  "defaultIsStatic": true
+  "defaultIsStatic": true,
+  "defaultVersion": "os4-a17",
+  "versions": {
+    "miui14": { "minSdk": 33, "targetSdk": 33, "compileSdk": 33 },
+    "os1-a13": { "minSdk": 33, "targetSdk": 33, "compileSdk": 33 },
+    "os1-a14": { "minSdk": 34, "targetSdk": 34, "compileSdk": 34 },
+    "os2-a14": { "minSdk": 34, "targetSdk": 34, "compileSdk": 34 },
+    "os2-a15": { "minSdk": 35, "targetSdk": 35, "compileSdk": 35 },
+    "os3-a15": { "minSdk": 35, "targetSdk": 35, "compileSdk": 35 },
+    "os3-a16": { "minSdk": 35, "targetSdk": 35, "compileSdk": 35 },
+    "os4-a17": { "minSdk": 35, "targetSdk": 35, "compileSdk": 35 }
+  }
 }

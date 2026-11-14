@@ -7,14 +7,21 @@ Hệ thống tự động biên dịch (compile), căn chỉnh (`zipalign`) và 
 ```text
 .
 ├── .github/workflows/build-overlays.yml   # GitHub Actions CI/CD
-├── overlays/                              # Thư mục chứa nguồn XML theo từng app
-│   └── com.android.settings/
-│       ├── overlay.json                   # Cấu hình RRO (tùy chọn)
-│       └── res/
-│           └── values-vi/
-│               └── strings.xml
+├── overlays/                              # Nguồn XML tách theo phiên bản ROM
+│   ├── miui14/                            # MIUI 14 (Android 13)
+│   ├── os1-a13/                           # HyperOS 1 (Android 13)
+│   ├── os1-a14/                           # HyperOS 1 (Android 14)
+│   ├── os2-a14/                           # HyperOS 2 (Android 14)
+│   ├── os2-a15/                           # HyperOS 2 (Android 15)
+│   ├── os3-a15/                           # HyperOS 3 (Android 15)
+│   ├── os3-a16/                           # HyperOS 3 (Android 16)
+│   └── os4-a17/                           # HyperOS 4 (Android 17)
+│       └── com.android.settings/
+│           ├── overlay.json
+│           └── res/values-vi/strings.xml
 ├── scripts/build_overlays.py              # Script build local & CI
-└── config.json                            # Cấu hình SDK & mặc định toàn cục
+├── scripts/sync_xml.py                    # Script sync XML từ Xiaomi.eu
+└── config.json                            # Cấu hình SDK theo từng phiên bản
 ```
 
 ## Thêm overlay mới
@@ -45,16 +52,16 @@ Hệ thống tự động biên dịch (compile), căn chỉnh (`zipalign`) và 
 # Kiểm tra cú pháp XML và sinh AndroidManifest.xml (không cần Android SDK)
 python3 scripts/build_overlays.py --validate-only
 
-# Build toàn bộ overlays ra thư mục dist/ (mặc định build tất cả ngôn ngữ có trong overlays/)
+# Build toàn bộ các phiên bản có overlay ra dist/<version>/
 python3 scripts/build_overlays.py --out dist
 
-# Chỉ build Tiếng Việt (vi) hoặc tất cả ngôn ngữ (all)
-python3 scripts/build_overlays.py --lang-mode vi --out dist
-python3 scripts/build_overlays.py --lang-mode all --out dist
+# Build riêng một phiên bản (ví dụ os4-a17, os3-a15, miui14...)
+python3 scripts/build_overlays.py --version os4-a17 --lang-mode vi --out dist
+python3 scripts/build_overlays.py --version os4-a17 --lang-mode all --out dist
 
-# Đồng bộ XML từ Xiaomi.eu (Tiếng Việt hoặc tất cả ngôn ngữ)
-python3 scripts/sync_xml.py --lang Vietnamese
-python3 scripts/sync_xml.py --lang all
+# Đồng bộ XML từ Xiaomi.eu vào phiên bản chỉ định
+python3 scripts/sync_xml.py --version os4-a17 --lang Vietnamese
+python3 scripts/sync_xml.py --version os4-a17 --lang all
 
 # Build riêng một số overlay
 python3 scripts/build_overlays.py --only com.android.settings,com.miui.home --out dist
