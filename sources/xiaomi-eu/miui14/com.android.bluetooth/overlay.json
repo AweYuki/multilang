@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.bluetooth",
+  "priority": 100,
+  "isStatic": true
+}

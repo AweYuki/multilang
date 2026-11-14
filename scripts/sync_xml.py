@@ -60,9 +60,15 @@ def sparse_clone(repo_url: str, dest: Path, variants: list[str], lang: str) -> N
         check=True,
     )
     if lang.lower() == "all":
+        if any(v in (".", "") for v in variants):
+            subprocess.run(["git", "-C", str(dest), "sparse-checkout", "disable"], check=True)
+            return
         sparse_paths = list(variants)
     else:
-        sparse_paths = [f"{variant}/{lang}" for variant in variants]
+        sparse_paths = [
+            lang if variant in (".", "") else f"{variant}/{lang}"
+            for variant in variants
+        ]
     subprocess.run(
         ["git", "-C", str(dest), "sparse-checkout", "set", *sparse_paths],
         check=True,
@@ -74,7 +80,7 @@ def discover_languages(source_dir: Path, variants: list[str], lang: str) -> list
         return [lang]
     langs: set[str] = set()
     for variant in variants:
-        variant_dir = source_dir / variant
+        variant_dir = source_dir if variant in (".", "") else source_dir / variant
         if variant_dir.is_dir():
             for child in variant_dir.iterdir():
                 if child.is_dir() and not child.name.startswith("."):
@@ -98,7 +104,8 @@ def sync_overlays(
 
     for current_lang in langs:
         for variant in variants:
-            main_dir = source_dir / variant / current_lang / "main"
+            variant_root = source_dir if variant in (".", "") else source_dir / variant
+            main_dir = variant_root / current_lang / "main"
             if not main_dir.is_dir():
                 continue
 

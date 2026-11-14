@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.xiaomi.scanner",
+  "priority": 100,
+  "isStatic": true
+}

@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.mtp",
+  "priority": 100,
+  "isStatic": true
+}

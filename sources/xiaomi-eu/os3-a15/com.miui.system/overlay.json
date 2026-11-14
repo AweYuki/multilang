@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.miui.system",
+  "priority": 100,
+  "isStatic": true
+}

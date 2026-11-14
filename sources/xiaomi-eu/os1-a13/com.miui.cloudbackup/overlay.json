@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.miui.cloudbackup",
+  "priority": 100,
+  "isStatic": true
+}

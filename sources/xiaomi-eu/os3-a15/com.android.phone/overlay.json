@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.phone",
+  "priority": 100,
+  "isStatic": true
+}

@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.server.telecom",
+  "priority": 100,
+  "isStatic": true
+}

@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.emergency",
+  "priority": 100,
+  "isStatic": true
+}

@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.thememanager",
+  "priority": 100,
+  "isStatic": true
+}

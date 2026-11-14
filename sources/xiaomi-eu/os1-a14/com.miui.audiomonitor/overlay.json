@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.miui.audiomonitor",
+  "priority": 100,
+  "isStatic": true
+}

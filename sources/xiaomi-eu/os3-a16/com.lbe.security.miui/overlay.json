@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.lbe.security.miui",
+  "priority": 100,
+  "isStatic": true
+}

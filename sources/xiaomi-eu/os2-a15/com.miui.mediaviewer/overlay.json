@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.miui.mediaviewer",
+  "priority": 100,
+  "isStatic": true
+}

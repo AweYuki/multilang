@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.miui.extraphoto",
+  "priority": 100,
+  "isStatic": true
+}

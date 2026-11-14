@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.miui.miuix.editor",
+  "priority": 100,
+  "isStatic": true
+}

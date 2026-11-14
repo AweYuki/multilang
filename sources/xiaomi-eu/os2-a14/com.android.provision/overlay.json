@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.provision",
+  "priority": 100,
+  "isStatic": true
+}

@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.captiveportallogin",
+  "priority": 100,
+  "isStatic": true
+}

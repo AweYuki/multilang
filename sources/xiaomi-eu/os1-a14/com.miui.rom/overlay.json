@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.miui.rom",
+  "priority": 100,
+  "isStatic": true
+}

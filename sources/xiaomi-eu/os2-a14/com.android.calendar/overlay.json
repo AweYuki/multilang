@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.calendar",
+  "priority": 100,
+  "isStatic": true
+}

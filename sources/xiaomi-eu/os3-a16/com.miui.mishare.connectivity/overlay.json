@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.miui.mishare.connectivity",
+  "priority": 100,
+  "isStatic": true
+}
