@@ -31,6 +31,16 @@ on:
         description: "Comma-separated package names (leave empty to translate all pending)"
         required: false
         default: ""
+      batch_size:
+        description: "Max strings per API request"
+        required: false
+        default: "30"
+        type: string
+      workers:
+        description: "Parallel translation workers"
+        required: false
+        default: "6"
+        type: string
 
 permissions:
   contents: write
@@ -61,8 +71,10 @@ jobs:
           MODEL: ${{ inputs.model }}
           TARGET_LANG: ${{ inputs.target_lang }}
           PACKAGES: ${{ inputs.packages }}
+          BATCH_SIZE: ${{ inputs.batch_size || '30' }}
+          WORKERS: ${{ inputs.workers || '6' }}
         run: |
-          ARGS=(--version "$ROM_VERSION" --target "$TARGET_LANG" --model "$MODEL")
+          ARGS=(--version "$ROM_VERSION" --target "$TARGET_LANG" --model "$MODEL" --batch-size "$BATCH_SIZE" --workers "$WORKERS")
           if [ -n "$PACKAGES" ]; then
             ARGS+=(--packages "$PACKAGES")
           fi

@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-"""Translate pending XML strings using translate.hzzmonet.io.vn API with checkpointing."""
+"""Translate pending XML strings using translate.hzzmonet.io.vn API with batching & parallelism."""
 
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import copy
+from dataclasses import dataclass
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import sys
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -25,10 +29,18 @@ from string_state import (
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_API_URL = "https://translate.hzzmonet.io.vn/api/v1/translate"
 DEFAULT_MODEL = "cx/gpt-6.1-sol"
+TAG_BLOCK_RE = re.compile(r"\[\[(\d+)\]\]\s*(.*?)\s*\[\[/\1\]\]", re.DOTALL)
 
 
 class TranslateAPIError(RuntimeError):
     """Raised when the translation API fails after retries."""
+
+
+@dataclass
+class TextSlot:
+    entry_index: int
+    setter: object  # callable(str) -> None
+    text: str
 
 
 def extract_translated_text(payload: object) -> str:
@@ -52,7 +64,7 @@ def call_translate_api(
     source: str,
     target: str,
     model: str,
-    timeout: int = 60,
+    timeout: int = 90,
     max_retries: int = 2,
 ) -> str:
     if not text.strip():
@@ -97,46 +109,105 @@ def call_translate_api(
     raise TranslateAPIError(str(last_err))
 
 
-def translate_element(
-    elem: ET.Element,
+def translate_batch_texts(
+    texts: list[str],
     api_url: str,
     token: str,
     source: str,
     target: str,
     model: str,
-) -> ET.Element:
-    translated = copy.deepcopy(elem)
+) -> list[str]:
+    if len(texts) == 1:
+        return [call_translate_api(texts[0], api_url, token, source, target, model)]
 
-    if translated.tag == "string":
-        # Preserve inline child tags (e.g. <xliff:g>) if present; translate text segments
-        if len(translated) == 0:
-            if translated.text:
-                translated.text = call_translate_api(translated.text, api_url, token, source, target, model)
+    packed = "\n".join(f"[[{idx}]]{t}[[/{idx}]]" for idx, t in enumerate(texts))
+    raw_reply = call_translate_api(packed, api_url, token, source, target, model)
+
+    parsed: dict[int, str] = {}
+    for match in TAG_BLOCK_RE.finditer(raw_reply):
+        idx = int(match.group(1))
+        if 0 <= idx < len(texts):
+            parsed[idx] = match.group(2)
+
+    results: list[str] = []
+    for idx, orig in enumerate(texts):
+        if idx in parsed and parsed[idx].strip():
+            results.append(parsed[idx])
         else:
-            if translated.text and translated.text.strip():
-                translated.text = call_translate_api(translated.text, api_url, token, source, target, model)
-            for child in translated:
+            # Fallback for any item whose wrapper tag was dropped by the model
+            results.append(call_translate_api(orig, api_url, token, source, target, model))
+    return results
+
+
+def collect_text_slots(entries: list[ET.Element]) -> tuple[list[ET.Element], list[TextSlot]]:
+    cloned: list[ET.Element] = [copy.deepcopy(e) for e in entries]
+    slots: list[TextSlot] = []
+
+    for entry_idx, elem in enumerate(cloned):
+        if elem.tag == "string":
+            if elem.text and elem.text.strip():
+                slots.append(
+                    TextSlot(
+                        entry_idx,
+                        lambda val, el=elem: setattr(el, "text", val),
+                        elem.text,
+                    )
+                )
+            for child in elem:
                 if child.tail and child.tail.strip():
-                    child.tail = call_translate_api(child.tail, api_url, token, source, target, model)
-        return translated
+                    slots.append(
+                        TextSlot(
+                            entry_idx,
+                            lambda val, ch=child: setattr(ch, "tail", val),
+                            child.tail,
+                        )
+                    )
+        elif elem.tag in ("string-array", "array", "plurals"):
+            for item in elem:
+                if item.tag == "item" and item.text and item.text.strip() and len(item) == 0:
+                    slots.append(
+                        TextSlot(
+                            entry_idx,
+                            lambda val, it=item: setattr(it, "text", val),
+                            item.text,
+                        )
+                    )
+    return cloned, slots
 
-    if translated.tag in ("string-array", "array", "plurals"):
-        for item in translated:
-            if item.tag == "item" and item.text and item.text.strip() and len(item) == 0:
-                item.text = call_translate_api(item.text, api_url, token, source, target, model)
-        return translated
 
-    return translated
+def build_entry_batches(
+    entries: list[ET.Element],
+    batch_size: int,
+    max_batch_chars: int,
+) -> list[tuple[list[int], list[ET.Element], list[TextSlot]]]:
+    """Group entries into batches so each batch translates complete XML entries."""
+    cloned, slots = collect_text_slots(entries)
+    slots_by_entry: dict[int, list[TextSlot]] = {}
+    for s in slots:
+        slots_by_entry.setdefault(s.entry_index, []).append(s)
 
+    batches: list[tuple[list[int], list[ET.Element], list[TextSlot]]] = []
+    cur_indices: list[int] = []
+    cur_slots: list[TextSlot] = []
+    cur_chars = 0
 
-def flush_state(
-    overlay_xml: Path,
-    translated_entries: dict[tuple[str, str], ET.Element],
-    pending_xml: Path,
-    remaining_pending: list[ET.Element],
-) -> None:
-    write_resources_xml(overlay_xml, list(translated_entries.values()))
-    write_resources_xml(pending_xml, remaining_pending)
+    for idx in range(len(entries)):
+        e_slots = slots_by_entry.get(idx, [])
+        e_chars = sum(len(s.text) for s in e_slots)
+        if cur_indices and (
+            len(cur_slots) + len(e_slots) > batch_size or cur_chars + e_chars > max_batch_chars
+        ):
+            batches.append((cur_indices, [cloned[i] for i in cur_indices], cur_slots))
+            cur_indices = []
+            cur_slots = []
+            cur_chars = 0
+        cur_indices.append(idx)
+        cur_slots.extend(e_slots)
+        cur_chars += e_chars
+
+    if cur_indices:
+        batches.append((cur_indices, [cloned[i] for i in cur_indices], cur_slots))
+    return batches
 
 
 def translate_package(
@@ -148,11 +219,13 @@ def translate_package(
     source: str,
     target: str,
     model: str,
-    save_every: int = 20,
-) -> tuple[int, bool]:
+    batch_size: int,
+    max_batch_chars: int,
+    workers: int,
+) -> int:
     pending_values = pending_pkg_dir / "res" / "values"
     overlay_values = overlay_pkg_dir / "res" / f"values-{target}"
-    translated_count = 0
+    translated_total = 0
 
     for xml_name in TARGET_XML_NAMES:
         pending_xml = pending_values / xml_name
@@ -168,29 +241,56 @@ def translate_package(
         translated_entries = load_xml_entries(overlay_xml)
         ensure_overlay_metadata(overlay_pkg_dir, pkg_name)
 
-        idx = 0
-        try:
-            while idx < len(pending_entries):
-                elem = pending_entries[idx]
-                key = (elem.tag, elem.attrib["name"])
-                t_elem = translate_element(elem, api_url, token, source, target, model)
-                translated_entries[key] = t_elem
-                translated_count += 1
-                idx += 1
+        batches = build_entry_batches(pending_entries, batch_size, max_batch_chars)
+        remaining_map: dict[int, ET.Element] = {i: e for i, e in enumerate(pending_entries)}
+        io_lock = threading.Lock()
+        stop_event = threading.Event()
 
-                if translated_count % save_every == 0:
-                    flush_state(overlay_xml, translated_entries, pending_xml, pending_entries[idx:])
-        except TranslateAPIError:
-            flush_state(overlay_xml, translated_entries, pending_xml, pending_entries[idx:])
-            raise
+        def process_batch(batch: tuple[list[int], list[ET.Element], list[TextSlot]]) -> int:
+            indices, elems, slots = batch
+            if stop_event.is_set():
+                return 0
+            if slots:
+                translated_texts = translate_batch_texts(
+                    [s.text for s in slots],
+                    api_url,
+                    token,
+                    source,
+                    target,
+                    model,
+                )
+                for slot, t_val in zip(slots, translated_texts):
+                    slot.setter(t_val)
+            with io_lock:
+                for orig_idx, t_elem in zip(indices, elems):
+                    key = (t_elem.tag, t_elem.attrib["name"])
+                    translated_entries[key] = t_elem
+                    remaining_map.pop(orig_idx, None)
+                write_resources_xml(overlay_xml, list(translated_entries.values()))
+                write_resources_xml(
+                    pending_xml,
+                    [remaining_map[i] for i in sorted(remaining_map)],
+                )
+            return len(elems)
 
-        flush_state(overlay_xml, translated_entries, pending_xml, [])
+        first_error: Exception | None = None
+        with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+            futures = [pool.submit(process_batch, b) for b in batches]
+            for fut in as_completed(futures):
+                try:
+                    translated_total += fut.result()
+                except TranslateAPIError as exc:
+                    stop_event.set()
+                    if first_error is None:
+                        first_error = exc
 
-    # Clean up empty pending package directory
+        if first_error is not None:
+            raise first_error
+
     if pending_pkg_dir.exists() and not any((pending_pkg_dir / "res" / "values").glob("*.xml")):
         shutil.rmtree(pending_pkg_dir, ignore_errors=True)
 
-    return translated_count, True
+    return translated_total
 
 
 def parse_args() -> argparse.Namespace:
@@ -204,7 +304,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--target", default="vi", help="Target language (default: vi)")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="Model name (default: cx/gpt-6.1-sol)")
     parser.add_argument("--packages", default="", help="Comma-separated package names to translate")
-    parser.add_argument("--save-every", type=int, default=20, help="Checkpoint interval in entries")
+    parser.add_argument("--batch-size", type=int, default=30, help="Max strings per API request (default: 30)")
+    parser.add_argument("--max-batch-chars", type=int, default=3500, help="Max characters per batch (default: 3500)")
+    parser.add_argument("--workers", type=int, default=6, help="Parallel translation workers (default: 6)")
     return parser.parse_args()
 
 
@@ -231,9 +333,12 @@ def main() -> int:
 
     total_translated = 0
     for pkg_dir in pkg_dirs:
-        print(f"[TRANSLATE] {args.version}/{pkg_dir.name} (model={args.model}) ...")
+        print(
+            f"[TRANSLATE] {args.version}/{pkg_dir.name} "
+            f"(model={args.model}, batch={args.batch_size}, workers={args.workers}) ..."
+        )
         try:
-            count, _ = translate_package(
+            count = translate_package(
                 pkg_dir.name,
                 pkg_dir,
                 overlays_ver_dir / pkg_dir.name,
@@ -242,7 +347,9 @@ def main() -> int:
                 args.source,
                 args.target,
                 args.model,
-                save_every=max(1, args.save_every),
+                batch_size=max(1, args.batch_size),
+                max_batch_chars=max(500, args.max_batch_chars),
+                workers=max(1, args.workers),
             )
             total_translated += count
             print(f"  [OK] {pkg_dir.name}: translated {count} entry(s)")
