@@ -1,0 +1,106 @@
+name: Extract Untranslated Strings from ROM
+
+on:
+  workflow_dispatch:
+    inputs:
+      rom_url:
+        description: "Direct download URL of HyperOS/MIUI ROM (.zip or .tgz)"
+        required: true
+        type: string
+      version:
+        description: "Target version folder under untranslated/"
+        type: choice
+        options:
+          - os4-a17
+          - os3-a16
+          - os3-a15
+          - os2-a15
+          - os2-a14
+          - os1-a14
+          - os1-a13
+          - miui14
+        required: true
+        default: "os4-a17"
+      partitions:
+        description: "Comma-separated partitions to unpack"
+        required: false
+        default: "system,system_ext,product,mi_ext"
+      commit_to_repo:
+        description: "Commit and push extracted XMLs to untranslated/<version>/"
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Free disk space on runner
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /opt/hostedtoolcache/CodeQL || true
+          df -h
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install unpack tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y erofs-utils p7zip-full android-sdk-libsparse-utils curl jq
+
+      - name: Download payload-dumper-go and apktool
+        run: |
+          mkdir -p /tmp/tools
+          DUMPER_URL=$(curl -s https://api.github.com/repos/ssut/payload-dumper-go/releases/latest | jq -r '.assets[] | select(.name | test("linux_amd64\\.tar\\.gz$")) | .browser_download_url' | head -n 1)
+          curl -L --fail "$DUMPER_URL" -o /tmp/tools/dumper.tar.gz
+          tar -xzf /tmp/tools/dumper.tar.gz -C /tmp/tools
+          chmod +x /tmp/tools/payload-dumper-go
+
+          APKTOOL_URL=$(curl -s https://api.github.com/repos/iBotPeaches/Apktool/releases/latest | jq -r '.assets[] | select(.name | endswith(".jar")) | .browser_download_url' | head -n 1)
+          curl -L --fail "$APKTOOL_URL" -o /tmp/tools/apktool.jar
+
+      - name: Download, unpack ROM, and extract untranslated strings
+        env:
+          ROM_URL: ${{ inputs.rom_url }}
+          ROM_VERSION: ${{ inputs.version }}
+          PARTITIONS: ${{ inputs.partitions }}
+        run: |
+          python3 scripts/extract_rom_strings.py \
+            --rom-url "$ROM_URL" \
+            --version "$ROM_VERSION" \
+            --partitions "$PARTITIONS" \
+            --payload-dumper /tmp/tools/payload-dumper-go \
+            --apktool /tmp/tools/apktool.jar \
+            --clean
+
+      - name: Upload untranslated XMLs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: untranslated-${{ inputs.version }}
+          path: untranslated/${{ inputs.version }}
+          if-no-files-found: error
+
+      - name: Commit and push to repository
+        if: ${{ inputs.commit_to_repo == true }}
+        env:
+          ROM_VERSION: ${{ inputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "untranslated/${ROM_VERSION}"
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore(untranslated): extract ${ROM_VERSION} strings from ROM"
+            git push
+          fi

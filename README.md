@@ -76,6 +76,7 @@ python3 scripts/build_overlays.py --keystore /path/to/my.keystore --keystore-pas
 
 - **Push / PR vào `main`**: tự động build (`vi`) và verify tất cả `.apk`, xuất ra mục **Artifacts** (`hyperos-cn-overlays-vi`).
 - **Run workflow (`workflow_dispatch`)**: chọn `language_mode` là `vi` (chỉ Tiếng Việt) hoặc `all` (tự động sync & build toàn bộ ngôn ngữ từ Xiaomi.eu).
+- **Extract Untranslated Strings from ROM** (`.github/workflows/extract-rom-strings.yml`): nhập `rom_url` (link tải ROM `.zip` hoặc `.tgz`) và chọn `version` (`os4-a17`..`miui14`) để tự động tải ROM, unpack phân vùng, giải mã APK và lưu string gốc (`values/strings.xml`, `arrays.xml`, `plurals.xml`) vào `untranslated/<version>/`.
 - **Push tag `v*`** (ví dụ `v1.0.0`) hoặc chạy **Run workflow** với `create_release: true`: tự động tạo GitHub Release đính kèm toàn bộ file `*.apk`.
 - Để ký bằng key riêng trên CI, thêm các GitHub Repository Secrets sau:
   - `KEYSTORE_BASE64`: nội dung file `.keystore` đã mã hóa base64
