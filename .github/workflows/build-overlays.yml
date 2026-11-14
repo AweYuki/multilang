@@ -52,15 +52,13 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install Android build-tools and platform
         env:
           COMPILE_SDK: ${{ inputs.compile_sdk || '35' }}
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "build-tools;35.0.0" "platforms;android-${COMPILE_SDK}"
+          SDKMANAGER="${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "build-tools;35.0.0" "platforms;android-${COMPILE_SDK}"
 
       - name: Prepare signing keystore (if secret configured)
         env:
