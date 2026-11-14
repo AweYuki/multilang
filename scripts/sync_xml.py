@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -13,6 +14,7 @@ import tempfile
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_REPO_URL = "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-4.0-XML-Global.git"
+INVALID_QUALIFIER_RE = re.compile(r"(?:^|-)(?:mcc|mnc)\d{4,}(?:-|$)")
 
 
 def sparse_clone(repo_url: str, dest: Path, variants: list[str], lang: str) -> None:
@@ -63,7 +65,12 @@ def sync_overlays(
             if clean and dst_res.exists():
                 shutil.rmtree(dst_res)
             dst_res.mkdir(parents=True, exist_ok=True)
-            shutil.copytree(src_res, dst_res, dirs_exist_ok=True)
+            shutil.copytree(
+                src_res,
+                dst_res,
+                dirs_exist_ok=True,
+                ignore=lambda _dir, names: [n for n in names if INVALID_QUALIFIER_RE.search(n)],
+            )
 
             meta_file = dst_overlay / "overlay.json"
             if not meta_file.is_file():
