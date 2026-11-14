@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <plurals name="ime_countDown_timer">
+        <item quantity="one">Switch (%ds)</item>
+        <item quantity="other">Switch (%ds)</item>
+    </plurals>
+</resources>

@@ -83,12 +83,14 @@ jobs:
             --apktool /tmp/tools/apktool.jar \
             --clean
 
-      - name: Upload untranslated XMLs artifact
+      - name: Upload untranslated & pending XMLs artifact
         uses: actions/upload-artifact@v4
         with:
           name: untranslated-${{ inputs.version }}
-          path: untranslated/${{ inputs.version }}
-          if-no-files-found: error
+          path: |
+            untranslated/${{ inputs.version }}
+            pending/${{ inputs.version }}
+          if-no-files-found: warn
 
       - name: Commit and push to repository
         if: ${{ inputs.commit_to_repo == true }}
@@ -97,10 +99,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "untranslated/${ROM_VERSION}"
+          git add -A "untranslated/${ROM_VERSION}" "pending/${ROM_VERSION}"
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "chore(untranslated): extract ${ROM_VERSION} strings from ROM"
+            git commit -m "chore(untranslated): extract ${ROM_VERSION} strings and pending delta"
             git push
           fi

@@ -1,0 +1,95 @@
+name: Translate Pending Strings
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "ROM version to translate"
+        type: choice
+        options:
+          - os4-a17
+          - os3-a16
+          - os3-a15
+          - os2-a15
+          - os2-a14
+          - os1-a14
+          - os1-a13
+          - miui14
+        required: true
+        default: "os4-a17"
+      model:
+        description: "Translation model (e.g. cx/gpt-6.1-sol)"
+        required: true
+        default: "cx/gpt-6.1-sol"
+        type: string
+      target_lang:
+        description: "Target language code"
+        required: true
+        default: "vi"
+        type: string
+      packages:
+        description: "Comma-separated package names (leave empty to translate all pending)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ensure pending delta exists for version
+        env:
+          ROM_VERSION: ${{ inputs.version }}
+          TARGET_LANG: ${{ inputs.target_lang }}
+        run: |
+          if [ ! -d "pending/${ROM_VERSION}" ] && [ -d "untranslated/${ROM_VERSION}" ]; then
+            python3 scripts/extract_rom_strings.py --sync-pending-only --version "$ROM_VERSION" --target-lang "$TARGET_LANG"
+          fi
+
+      - name: Translate pending strings
+        id: translate
+        continue-on-error: true
+        env:
+          TRANSLATE_API_TOKEN: ${{ secrets.TRANSLATE_API_TOKEN }}
+          ROM_VERSION: ${{ inputs.version }}
+          MODEL: ${{ inputs.model }}
+          TARGET_LANG: ${{ inputs.target_lang }}
+          PACKAGES: ${{ inputs.packages }}
+        run: |
+          ARGS=(--version "$ROM_VERSION" --target "$TARGET_LANG" --model "$MODEL")
+          if [ -n "$PACKAGES" ]; then
+            ARGS+=(--packages "$PACKAGES")
+          fi
+          python3 scripts/translate_strings.py "${ARGS[@]}"
+
+      - name: Commit and push translated and remaining pending strings
+        if: always()
+        env:
+          ROM_VERSION: ${{ inputs.version }}
+          TRANSLATE_OUTCOME: ${{ steps.translate.outcome }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A "overlays/${ROM_VERSION}" "pending/${ROM_VERSION}"
+          if git diff --cached --quiet; then
+            echo "No translation changes to commit."
+          else
+            if [ "$TRANSLATE_OUTCOME" = "success" ]; then
+              git commit -m "feat(translate): update ${ROM_VERSION} translations"
+            else
+              git commit -m "chore(translate): save partial ${ROM_VERSION} translations and remaining pending"
+            fi
+            git push
+          fi
+
+      - name: Fail job if translation API stopped with error
+        if: steps.translate.outcome == 'failure'
+        run: |
+          echo "Translation stopped early due to API error; partial progress has been committed."
+          exit 1

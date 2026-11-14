@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="xiaomi_apn_source_service">com.xiaomi.apn/com.xiaomi.apn.service.CarrierStudioApnSourceService</string>
+</resources>

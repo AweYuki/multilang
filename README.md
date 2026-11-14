@@ -6,22 +6,20 @@ Hệ thống tự động biên dịch (compile), căn chỉnh (`zipalign`) và 
 
 ```text
 .
-├── .github/workflows/build-overlays.yml   # GitHub Actions CI/CD
-├── overlays/                              # Nguồn XML tách theo phiên bản ROM
-│   ├── miui14/                            # MIUI 14 (Android 13)
-│   ├── os1-a13/                           # HyperOS 1 (Android 13)
-│   ├── os1-a14/                           # HyperOS 1 (Android 14)
-│   ├── os2-a14/                           # HyperOS 2 (Android 14)
-│   ├── os2-a15/                           # HyperOS 2 (Android 15)
-│   ├── os3-a15/                           # HyperOS 3 (Android 15)
-│   ├── os3-a16/                           # HyperOS 3 (Android 16)
-│   └── os4-a17/                           # HyperOS 4 (Android 17)
-│       └── com.android.settings/
-│           ├── overlay.json
-│           └── res/values-vi/strings.xml
-├── scripts/build_overlays.py              # Script build local & CI
-├── scripts/sync_xml.py                    # Script sync XML từ Xiaomi.eu
-└── config.json                            # Cấu hình SDK theo từng phiên bản
+├── .github/workflows/
+│   ├── build-overlays.yml             # Build & release APK overlay
+│   ├── extract-rom-strings.yml        # Tải ROM, unpack lấy string gốc + lọc phần chưa dịch
+│   └── translate.yml                  # Dịch phần chưa dịch qua API
+├── untranslated/<version>/            # 1. Ngôn ngữ gốc trích từ ROM
+├── pending/<version>/                 # 2. Phần chưa dịch (hoặc gốc có update)
+├── overlays/<version>/                # 3. Phần đã dịch (nguồn build APK)
+├── scripts/
+│   ├── build_overlays.py              # Script build local & CI
+│   ├── extract_rom_strings.py         # Script unpack ROM & tách pending
+│   ├── translate_strings.py           # Script dịch API có checkpoint
+│   ├── string_state.py                # Logic so sánh 3 trạng thái XML
+│   └── sync_xml.py                    # Script sync XML từ Xiaomi.eu
+└── config.json                        # Cấu hình SDK theo từng phiên bản
 ```
 
 ## Thêm overlay mới
@@ -76,7 +74,8 @@ python3 scripts/build_overlays.py --keystore /path/to/my.keystore --keystore-pas
 
 - **Push / PR vào `main`**: tự động build (`vi`) và verify tất cả `.apk`, xuất ra mục **Artifacts** (`hyperos-cn-overlays-vi`).
 - **Run workflow (`workflow_dispatch`)**: chọn `language_mode` là `vi` (chỉ Tiếng Việt) hoặc `all` (tự động sync & build toàn bộ ngôn ngữ từ Xiaomi.eu).
-- **Extract Untranslated Strings from ROM** (`.github/workflows/extract-rom-strings.yml`): nhập `rom_url` (link tải ROM `.zip` hoặc `.tgz`) và chọn `version` (`os4-a17`..`miui14`) để tự động tải ROM, unpack phân vùng, giải mã APK và lưu string gốc (`values/strings.xml`, `arrays.xml`, `plurals.xml`) vào `untranslated/<version>/`.
+- **Extract Untranslated Strings from ROM** (`.github/workflows/extract-rom-strings.yml`): nhập `rom_url` (link tải ROM `.zip` hoặc `.tgz`) và chọn `version` (`os4-a17`..`miui14`) để tự động tải ROM, unpack phân vùng, lưu string gốc vào `untranslated/<version>/` và lọc các chuỗi chưa dịch / có cập nhật vào `pending/<version>/`.
+- **Translate Pending Strings** (`.github/workflows/translate.yml`): dịch các chuỗi trong `pending/<version>/` qua `translate.hzzmonet.io.vn` (chọn `model`, mặc định `cx/gpt-6.1-sol`). Cần thêm Secret `TRANSLATE_API_TOKEN` trong GitHub Repo Settings. Nếu API lỗi giữa chừng, workflow vẫn tự commit cả phần đã dịch (`overlays/`) lẫn phần chưa dịch còn lại (`pending/`).
 - **Push tag `v*`** (ví dụ `v1.0.0`) hoặc chạy **Run workflow** với `create_release: true`: tự động tạo GitHub Release đính kèm toàn bộ file `*.apk`.
 - Để ký bằng key riêng trên CI, thêm các GitHub Repository Secrets sau:
   - `KEYSTORE_BASE64`: nội dung file `.keystore` đã mã hóa base64

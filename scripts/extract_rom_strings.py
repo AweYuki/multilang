@@ -15,8 +15,9 @@ import tempfile
 import xml.etree.ElementTree as ET
 import zipfile
 
+from string_state import TARGET_XML_NAMES, compute_pending_for_version
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
-TARGET_XML_NAMES = ("strings.xml", "arrays.xml", "plurals.xml")
 
 
 def run_cmd(cmd: list[str], label: str, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -216,30 +217,64 @@ def resolve_apktool_cmd(apktool_arg: str | None) -> list[str]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Download/unpack a HyperOS ROM and extract untranslated strings.")
-    group = parser.add_mutually_exclusive_group(required=True)
+    group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument("--rom-url", help="Direct URL to ROM .zip or .tgz")
     group.add_argument("--rom-file", type=Path, help="Local path to ROM .zip or .tgz")
     parser.add_argument("--version", default="os4-a17", help="Version folder under untranslated/ (default: os4-a17)")
-    parser.add_argument("--out-dir", type=Path, default=ROOT_DIR / "untranslated", help="Output root directory")
+    parser.add_argument("--out-dir", type=Path, default=ROOT_DIR / "untranslated", help="Untranslated output root directory")
+    parser.add_argument("--overlays-dir", type=Path, default=ROOT_DIR / "overlays", help="Translated overlays root directory")
+    parser.add_argument("--pending-dir", type=Path, default=ROOT_DIR / "pending", help="Pending (to-translate) output root directory")
+    parser.add_argument("--target-lang", default="vi", help="Target language code in overlays/ (default: vi)")
     parser.add_argument("--partitions", default="system,system_ext,product,mi_ext", help="Comma-separated partitions")
     parser.add_argument("--payload-dumper", default="payload-dumper-go", help="Path to payload-dumper-go binary")
     parser.add_argument("--apktool", default=None, help="Path to apktool binary or apktool.jar")
     parser.add_argument("--jobs", type=int, default=min(4, os.cpu_count() or 1), help="Parallel apktool workers")
     parser.add_argument("--clean", action="store_true", help="Clean untranslated/<version> before extracting")
+    parser.add_argument(
+        "--sync-pending-only",
+        action="store_true",
+        help="Only recompute pending/<version> from existing untranslated/<version> and overlays/<version>",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    out_version_dir = args.out_dir / args.version
+    overlays_version_dir = args.overlays_dir / args.version
+    pending_version_dir = args.pending_dir / args.version
+
+    if args.sync_pending_only:
+        if pending_version_dir.exists():
+            shutil.rmtree(pending_version_dir)
+        pkg_count, entry_count = compute_pending_for_version(
+            out_version_dir,
+            overlays_version_dir,
+            pending_version_dir,
+            prev_untranslated_dir=None,
+            target_lang=args.target_lang,
+        )
+        print(f"Computed pending for {args.version}: {pkg_count} package(s), {entry_count} entry(s) in {pending_version_dir}")
+        return 0
+
+    if not args.rom_url and not args.rom_file:
+        print("Error: one of --rom-url, --rom-file, or --sync-pending-only is required.", file=sys.stderr)
+        return 1
+
     apktool_cmd = resolve_apktool_cmd(args.apktool)
     partitions = [p.strip() for p in args.partitions.split(",") if p.strip()]
-    out_version_dir = args.out_dir / args.version
-    if args.clean and out_version_dir.exists():
-        shutil.rmtree(out_version_dir)
-    out_version_dir.mkdir(parents=True, exist_ok=True)
 
     with tempfile.TemporaryDirectory(prefix="hyperos_rom_") as tmp:
         work_dir = Path(tmp)
+        prev_snapshot: Path | None = None
+        if out_version_dir.is_dir():
+            prev_snapshot = work_dir / "prev_untranslated"
+            shutil.copytree(out_version_dir, prev_snapshot)
+
+        if args.clean and out_version_dir.exists():
+            shutil.rmtree(out_version_dir)
+        out_version_dir.mkdir(parents=True, exist_ok=True)
+
         if args.rom_url:
             ext = ".tgz" if ".tgz" in args.rom_url.lower() or ".tar.gz" in args.rom_url.lower() else ".zip"
             rom_path = download_rom(args.rom_url, work_dir / f"rom{ext}")
@@ -287,7 +322,20 @@ def main() -> int:
                 if res:
                     extracted_pkgs.append(res)
 
-    print(f"Done! Extracted untranslated strings for {len(extracted_pkgs)} package(s) into {out_version_dir}")
+        if pending_version_dir.exists():
+            shutil.rmtree(pending_version_dir)
+        pkg_count, entry_count = compute_pending_for_version(
+            out_version_dir,
+            overlays_version_dir,
+            pending_version_dir,
+            prev_untranslated_dir=prev_snapshot,
+            target_lang=args.target_lang,
+        )
+
+    print(
+        f"Done! Extracted {len(extracted_pkgs)} package(s) into {out_version_dir}; "
+        f"pending delta: {pkg_count} package(s), {entry_count} entry(s) in {pending_version_dir}"
+    )
     return 0
 
 
