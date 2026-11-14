@@ -301,7 +301,6 @@ def build_single_overlay(
             target_sdk,
             "--auto-add-overlay",
             "--no-resource-deduping",
-            "-R",
             str(compiled_zip),
         ],
         f"[{overlay_dir.name}] aapt2 link",
