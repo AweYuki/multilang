@@ -42,9 +42,9 @@ on:
         default: "15000"
         type: string
       workers:
-        description: "Parallel translation workers"
+        description: "Parallel package workers"
         required: false
-        default: "8"
+        default: "6"
         type: string
 
 permissions:
@@ -78,7 +78,7 @@ jobs:
           PACKAGES: ${{ inputs.packages }}
           BATCH_SIZE: ${{ inputs.batch_size || '100' }}
           MAX_BATCH_CHARS: ${{ inputs.max_batch_chars || '15000' }}
-          WORKERS: ${{ inputs.workers || '8' }}
+          WORKERS: ${{ inputs.workers || '6' }}
         run: |
           ARGS=(--version "$ROM_VERSION" --target "$TARGET_LANG" --model "$MODEL" --batch-size "$BATCH_SIZE" --max-batch-chars "$MAX_BATCH_CHARS" --workers "$WORKERS")
           if [ -n "$PACKAGES" ]; then
