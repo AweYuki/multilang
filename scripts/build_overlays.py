@@ -333,6 +333,7 @@ def build_single_overlay(
     keystore: KeystoreConfig | None,
     validate_only: bool,
     lang_mode: str,
+    apk_filename: str | None = None,
 ) -> Path | None:
     res_dir = overlay_dir / "res"
     fb_res_dir = (fallback_overlay_dir / "res") if fallback_overlay_dir else None
@@ -357,7 +358,7 @@ def build_single_overlay(
     unaligned_apk = work_dir / "unaligned.apk"
     aligned_apk = work_dir / "aligned.apk"
     manifest_pkg = ET.parse(manifest_path).getroot().attrib.get("package") or overlay_dir.name
-    out_apk = out_dir / f"{manifest_pkg}.apk"
+    out_apk = out_dir / (apk_filename or f"{manifest_pkg}.apk")
 
     min_sdk = str(config.get("minSdk", 33))
     target_sdk = str(config.get("targetSdk", 35))
@@ -476,7 +477,8 @@ def main() -> int:
     else:
         version_names = [v.strip() for v in args.version.split(",") if v.strip()]
 
-    tasks: list[tuple[str, Path, Path | None, dict, Path, Path]] = []
+    apk_label = "vietnamese" if args.lang_mode == "vi" else "multilang"
+    tasks: list[tuple[str, Path, Path | None, dict, Path, Path, str]] = []
     for ver in version_names:
         ver_dir = args.overlays_dir / ver
         fb_ver_dir = (args.fallback_dir / ver) if args.fallback_dir else None
@@ -513,9 +515,10 @@ def main() -> int:
 
         ver_build_dir = args.build_dir / ver
         ver_out_dir = args.out / ver
-        for pkg_name in pkg_names:
+        for idx, pkg_name in enumerate(pkg_names, start=1):
             ov_dir, fb_ov_dir = pkg_map[pkg_name]
-            tasks.append((ver, ov_dir, fb_ov_dir, ver_config, ver_build_dir, ver_out_dir))
+            apk_filename = f"awe.{apk_label}{idx:02d}.apk"
+            tasks.append((ver, ov_dir, fb_ov_dir, ver_config, ver_build_dir, ver_out_dir, apk_filename))
 
     if not tasks:
         print("No overlays found to build.", file=sys.stderr)
@@ -527,7 +530,7 @@ def main() -> int:
         default_compile_sdk = int(tasks[0][3].get("compileSdk", 35))
         toolchain = resolve_toolchain(default_compile_sdk)
         keystore = ensure_keystore(args.build_dir, args)
-        for _, _, _, _, _, ver_out_dir in tasks:
+        for _, _, _, _, _, ver_out_dir, _ in tasks:
             ver_out_dir.mkdir(parents=True, exist_ok=True)
     else:
         args.build_dir.mkdir(parents=True, exist_ok=True)
@@ -547,8 +550,9 @@ def main() -> int:
                 keystore,
                 args.validate_only,
                 args.lang_mode,
+                apk_filename,
             ): f"{ver}/{ov_dir.name}"
-            for ver, ov_dir, fb_ov_dir, ver_config, ver_build_dir, ver_out_dir in tasks
+            for ver, ov_dir, fb_ov_dir, ver_config, ver_build_dir, ver_out_dir, apk_filename in tasks
         }
         for fut in as_completed(futures):
             name = futures[fut]
