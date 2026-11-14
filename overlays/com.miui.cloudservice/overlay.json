@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.miui.cloudservice",
+  "priority": 100,
+  "isStatic": true
+}

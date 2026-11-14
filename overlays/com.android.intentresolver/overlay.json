@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.intentresolver",
+  "priority": 100,
+  "isStatic": true
+}

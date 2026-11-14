@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.miui.privatespace",
+  "priority": 100,
+  "isStatic": true
+}

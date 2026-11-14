@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.safetycenter.resources",
+  "priority": 100,
+  "isStatic": true
+}

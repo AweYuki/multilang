@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.providers.downloads.ui",
+  "priority": 100,
+  "isStatic": true
+}

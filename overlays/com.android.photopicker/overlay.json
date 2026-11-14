@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.photopicker",
+  "priority": 100,
+  "isStatic": true
+}
