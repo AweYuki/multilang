@@ -73,7 +73,9 @@ python3 scripts/build_overlays.py --keystore /path/to/my.keystore --keystore-pas
 ## GitHub Actions & Release
 
 - **Push / PR vào `main`**: tự động build (`vi`) và verify tất cả `.apk`, xuất ra mục **Artifacts** (`hyperos-cn-overlays-vi`).
-- **Run workflow (`workflow_dispatch`)**: chọn `language_mode` là `vi` (chỉ Tiếng Việt) hoặc `all` (tự động sync & build toàn bộ ngôn ngữ từ Xiaomi.eu).
+- **Run workflow (`build-overlays.yml`)**:
+  - Chọn **`string_source`**: `repo` (`overlays/`), `xiaomi-eu` (sync trực tiếp từ `Xiaomi.eu-HyperOS-4.0-XML-Global.git`), `xiaomi-eu+repo` (ưu tiên Xiaomi.eu, bù phần thiếu từ `overlays/`), `repo+xiaomi-eu`, hoặc `custom` (`sources/custom/`).
+  - Chọn **`version`** (`all` hoặc từng phiên bản `os4-a17`..`miui14`) và **`language_mode`** (`vi` hoặc `all`).
 - **Extract Untranslated Strings from ROM** (`.github/workflows/extract-rom-strings.yml`): nhập `rom_url` (link tải ROM `.zip` hoặc `.tgz`) và chọn `version` (`os4-a17`..`miui14`) để tự động tải ROM, unpack phân vùng, lưu string gốc vào `untranslated/<version>/` và lọc các chuỗi chưa dịch / có cập nhật vào `pending/<version>/`.
 - **Translate Pending Strings** (`.github/workflows/translate.yml`): dịch các chuỗi trong `pending/<version>/` qua `translate.hzzmonet.io.vn` (chọn `model`, mặc định `cx/gpt-6.1-sol`). Cần thêm Secret `TRANSLATE_API_TOKEN` trong GitHub Repo Settings. Nếu API lỗi giữa chừng, workflow vẫn tự commit cả phần đã dịch (`overlays/`) lẫn phần chưa dịch còn lại (`pending/`).
 - **Push tag `v*`** (ví dụ `v1.0.0`) hoặc chạy **Run workflow** với `create_release: true`: tự động tạo GitHub Release đính kèm toàn bộ file `*.apk`.

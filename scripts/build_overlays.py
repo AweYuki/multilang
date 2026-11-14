@@ -258,25 +258,74 @@ def run_cmd(cmd: list[str], label: str) -> None:
         raise RuntimeError(f"{label} failed (exit {proc.returncode}):\n{proc.stdout.strip()}")
 
 
-def stage_res_dir(res_dir: Path, work_dir: Path, lang_mode: str) -> Path:
-    if lang_mode == "all":
+def stage_res_dir(
+    res_dir: Path,
+    fallback_res_dir: Path | None,
+    work_dir: Path,
+    lang_mode: str,
+) -> Path:
+    vi_pattern = re.compile(r"(?:^|-)vi(?:-|$)")
+
+    def should_include(name: str) -> bool:
+        return lang_mode == "all" or bool(vi_pattern.search(name))
+
+    if fallback_res_dir is None and lang_mode == "all":
         return res_dir
 
-    vi_pattern = re.compile(r"(?:^|-)vi(?:-|$)")
     staged_res = work_dir / "res"
     staged_res.mkdir(parents=True, exist_ok=True)
     matched = 0
-    for child in res_dir.iterdir():
-        if child.is_dir() and vi_pattern.search(child.name):
-            shutil.copytree(child, staged_res / child.name, dirs_exist_ok=True)
+
+    if fallback_res_dir and fallback_res_dir.is_dir():
+        for child in fallback_res_dir.iterdir():
+            if child.is_dir() and should_include(child.name):
+                shutil.copytree(child, staged_res / child.name, dirs_exist_ok=True)
+                matched += 1
+
+    if res_dir.is_dir():
+        for child in res_dir.iterdir():
+            if not (child.is_dir() and should_include(child.name)):
+                continue
+            dst_sub = staged_res / child.name
+            if not dst_sub.exists():
+                shutil.copytree(child, dst_sub, dirs_exist_ok=True)
+            else:
+                # Merge XML files so primary source overrides fallback on duplicate keys
+                for item in child.rglob("*"):
+                    if not item.is_file():
+                        continue
+                    rel = item.relative_to(child)
+                    dst_file = dst_sub / rel
+                    dst_file.parent.mkdir(parents=True, exist_ok=True)
+                    if item.suffix == ".xml" and dst_file.is_file():
+                        try:
+                            fb_root = ET.parse(dst_file).getroot()
+                            pr_root = ET.parse(item).getroot()
+                            merged: dict[tuple[str, str | None], ET.Element] = {}
+                            for el in fb_root:
+                                merged[(el.tag, el.attrib.get("name"))] = el
+                            for el in pr_root:
+                                merged[(el.tag, el.attrib.get("name"))] = el
+                            out_root = ET.Element("resources")
+                            for el in merged.values():
+                                out_root.append(el)
+                            out_tree = ET.ElementTree(out_root)
+                            ET.indent(out_tree, space="    ")
+                            out_tree.write(dst_file, encoding="utf-8", xml_declaration=True)
+                            continue
+                        except ET.ParseError:
+                            pass
+                    shutil.copy2(item, dst_file)
             matched += 1
+
     if matched == 0:
-        raise ValueError(f"No Vietnamese (vi) resource directories found in {res_dir}")
+        raise ValueError(f"No matching ({lang_mode}) resource directories found in {res_dir}")
     return staged_res
 
 
 def build_single_overlay(
     overlay_dir: Path,
+    fallback_overlay_dir: Path | None,
     config: dict,
     build_dir: Path,
     out_dir: Path,
@@ -286,7 +335,8 @@ def build_single_overlay(
     lang_mode: str,
 ) -> Path | None:
     res_dir = overlay_dir / "res"
-    if not res_dir.is_dir():
+    fb_res_dir = (fallback_overlay_dir / "res") if fallback_overlay_dir else None
+    if not res_dir.is_dir() and not (fb_res_dir and fb_res_dir.is_dir()):
         raise ValueError(f"Missing res/ directory in {overlay_dir}")
 
     work_dir = build_dir / overlay_dir.name
@@ -294,10 +344,11 @@ def build_single_overlay(
         shutil.rmtree(work_dir)
     work_dir.mkdir(parents=True, exist_ok=True)
 
-    active_res_dir = stage_res_dir(res_dir, work_dir, lang_mode)
+    active_res_dir = stage_res_dir(res_dir, fb_res_dir, work_dir, lang_mode)
     validate_xml_tree(active_res_dir)
 
-    manifest_path = build_manifest_xml(overlay_dir, config, work_dir)
+    manifest_source = overlay_dir if (overlay_dir / "AndroidManifest.xml").is_file() or (overlay_dir / "overlay.json").is_file() else (fallback_overlay_dir or overlay_dir)
+    manifest_path = build_manifest_xml(manifest_source, config, work_dir)
     if validate_only:
         return None
 
@@ -365,7 +416,8 @@ def parse_args() -> argparse.Namespace:
         description="Build HyperOS CN language RRO overlay APKs using aapt2, zipalign, and apksigner."
     )
     parser.add_argument("--config", type=Path, default=ROOT_DIR / "config.json", help="Path to config.json")
-    parser.add_argument("--overlays-dir", type=Path, default=ROOT_DIR / "overlays", help="Overlays source directory")
+    parser.add_argument("--overlays-dir", type=Path, default=ROOT_DIR / "overlays", help="Primary overlays source directory")
+    parser.add_argument("--fallback-dir", type=Path, default=None, help="Optional fallback overlays source directory")
     parser.add_argument("--build-dir", type=Path, default=ROOT_DIR / "build", help="Intermediate build directory")
     parser.add_argument("--out", type=Path, default=ROOT_DIR / "dist", help="Output directory for signed APKs")
     parser.add_argument("--only", type=str, default="", help="Comma-separated overlay folder names to build")
@@ -423,20 +475,32 @@ def main() -> int:
     else:
         version_names = [v.strip() for v in args.version.split(",") if v.strip()]
 
-    tasks: list[tuple[str, Path, dict, Path, Path]] = []
+    tasks: list[tuple[str, Path, Path | None, dict, Path, Path]] = []
     for ver in version_names:
         ver_dir = args.overlays_dir / ver
-        if not ver_dir.is_dir():
-            print(f"Error: version directory not found: {ver_dir}", file=sys.stderr)
-            return 1
-        overlay_dirs = sorted(
-            d for d in ver_dir.iterdir()
-            if d.is_dir() and not d.name.startswith(".") and (d / "res").is_dir()
-        )
+        fb_ver_dir = (args.fallback_dir / ver) if args.fallback_dir else None
+        if not ver_dir.is_dir() and not (fb_ver_dir and fb_ver_dir.is_dir()):
+            if args.version != "all":
+                print(f"Error: version directory not found: {ver_dir}", file=sys.stderr)
+                return 1
+            continue
+
+        pkg_map: dict[str, tuple[Path, Path | None]] = {}
+        if fb_ver_dir and fb_ver_dir.is_dir():
+            for d in sorted(fb_ver_dir.iterdir()):
+                if d.is_dir() and not d.name.startswith(".") and (d / "res").is_dir():
+                    pkg_map[d.name] = (d, None)
+        if ver_dir.is_dir():
+            for d in sorted(ver_dir.iterdir()):
+                if d.is_dir() and not d.name.startswith(".") and (d / "res").is_dir():
+                    prev_fb = pkg_map[d.name][0] if d.name in pkg_map else None
+                    pkg_map[d.name] = (d, prev_fb)
+
+        pkg_names = sorted(pkg_map)
         if args.only.strip():
             wanted = {item.strip() for item in args.only.split(",") if item.strip()}
-            overlay_dirs = [d for d in overlay_dirs if d.name in wanted]
-        if not overlay_dirs:
+            pkg_names = [n for n in pkg_names if n in wanted]
+        if not pkg_names:
             if args.version != "all":
                 print(f"[SKIP] No overlays found in {ver_dir}")
             continue
@@ -448,8 +512,9 @@ def main() -> int:
 
         ver_build_dir = args.build_dir / ver
         ver_out_dir = args.out / ver
-        for ov_dir in overlay_dirs:
-            tasks.append((ver, ov_dir, ver_config, ver_build_dir, ver_out_dir))
+        for pkg_name in pkg_names:
+            ov_dir, fb_ov_dir = pkg_map[pkg_name]
+            tasks.append((ver, ov_dir, fb_ov_dir, ver_config, ver_build_dir, ver_out_dir))
 
     if not tasks:
         print("No overlays found to build.", file=sys.stderr)
@@ -458,10 +523,10 @@ def main() -> int:
     toolchain: Toolchain | None = None
     keystore: KeystoreConfig | None = None
     if not args.validate_only:
-        default_compile_sdk = int(tasks[0][2].get("compileSdk", 35))
+        default_compile_sdk = int(tasks[0][3].get("compileSdk", 35))
         toolchain = resolve_toolchain(default_compile_sdk)
         keystore = ensure_keystore(args.build_dir, args)
-        for _, _, _, _, ver_out_dir in tasks:
+        for _, _, _, _, _, ver_out_dir in tasks:
             ver_out_dir.mkdir(parents=True, exist_ok=True)
     else:
         args.build_dir.mkdir(parents=True, exist_ok=True)
@@ -473,6 +538,7 @@ def main() -> int:
             pool.submit(
                 build_single_overlay,
                 ov_dir,
+                fb_ov_dir,
                 ver_config,
                 ver_build_dir,
                 ver_out_dir,
@@ -481,7 +547,7 @@ def main() -> int:
                 args.validate_only,
                 args.lang_mode,
             ): f"{ver}/{ov_dir.name}"
-            for ver, ov_dir, ver_config, ver_build_dir, ver_out_dir in tasks
+            for ver, ov_dir, fb_ov_dir, ver_config, ver_build_dir, ver_out_dir in tasks
         }
         for fut in as_completed(futures):
             name = futures[fut]
