@@ -1,0 +1,7 @@
+{
+  "package": "com.qti.qualcomm.deviceinfo",
+  "apkName": "DeviceInfo.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

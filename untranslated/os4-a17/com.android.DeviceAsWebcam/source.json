@@ -1,0 +1,7 @@
+{
+  "package": "com.android.DeviceAsWebcam",
+  "apkName": "DeviceAsWebcam.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

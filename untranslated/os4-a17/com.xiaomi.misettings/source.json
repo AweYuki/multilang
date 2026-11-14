@@ -1,0 +1,9 @@
+{
+  "package": "com.xiaomi.misettings",
+  "apkName": "MISettings.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

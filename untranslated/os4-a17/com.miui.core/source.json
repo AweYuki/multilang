@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.core",
+  "apkName": "XmsCore.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

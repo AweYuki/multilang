@@ -1,0 +1,7 @@
+{
+  "package": "com.android.inputdevices",
+  "apkName": "InputDevices.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

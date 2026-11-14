@@ -1,0 +1,8 @@
+{
+  "package": "com.xiaomi.bdsms",
+  "apkName": "Bdsms.apk",
+  "files": [
+    "strings.xml",
+    "plurals.xml"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "package": "org.codeaurora.ims",
+  "apkName": "ims.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

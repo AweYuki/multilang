@@ -1,0 +1,7 @@
+{
+  "package": "com.wapi.wapicertmanage",
+  "apkName": "WapiCertManage.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "package": "com.android.phone",
+  "apkName": "TeleService.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

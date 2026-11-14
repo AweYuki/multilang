@@ -1,0 +1,9 @@
+{
+  "package": "com.xiaomi.mis",
+  "apkName": "MIS.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

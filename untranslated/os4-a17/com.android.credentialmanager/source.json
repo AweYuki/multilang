@@ -1,0 +1,9 @@
+{
+  "package": "com.android.credentialmanager",
+  "apkName": "MiuiCredentialManager.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

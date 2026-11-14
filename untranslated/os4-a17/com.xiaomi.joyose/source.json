@@ -1,0 +1,7 @@
+{
+  "package": "com.xiaomi.joyose",
+  "apkName": "Joyose.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.personalassistant",
+  "apkName": "MIUIPersonalAssistantPhoneOS4.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

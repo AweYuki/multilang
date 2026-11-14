@@ -1,0 +1,8 @@
+{
+  "package": "com.xiaomi.hypercomm",
+  "apkName": "HyperComm.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

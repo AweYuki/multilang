@@ -1,0 +1,7 @@
+{
+  "package": "com.android.providers.calendar",
+  "apkName": "CalendarProvider.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

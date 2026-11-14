@@ -1,0 +1,7 @@
+{
+  "package": "com.google.android.gsf",
+  "apkName": "GoogleServicesFramework.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

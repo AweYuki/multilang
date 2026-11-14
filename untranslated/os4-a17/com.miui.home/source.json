@@ -1,0 +1,8 @@
+{
+  "package": "com.miui.home",
+  "apkName": "MiuiHome.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

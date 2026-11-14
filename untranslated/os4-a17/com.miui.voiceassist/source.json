@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.voiceassist",
+  "apkName": "VoiceAssistAndroidT.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

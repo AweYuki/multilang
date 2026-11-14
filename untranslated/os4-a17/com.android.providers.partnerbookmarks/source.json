@@ -1,0 +1,8 @@
+{
+  "package": "com.android.providers.partnerbookmarks",
+  "apkName": "PartnerBookmarksProvider.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

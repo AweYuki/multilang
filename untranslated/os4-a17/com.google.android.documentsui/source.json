@@ -1,0 +1,9 @@
+{
+  "package": "com.google.android.documentsui",
+  "apkName": "DocumentsUIGoogleMiuiCn.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

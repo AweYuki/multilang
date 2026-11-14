@@ -1,0 +1,7 @@
+{
+  "package": "com.android.dynsystem",
+  "apkName": "DynamicSystemInstallationService.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

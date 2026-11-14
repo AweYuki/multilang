@@ -1,0 +1,7 @@
+{
+  "package": "com.qualcomm.qti.xrvd.service",
+  "apkName": "xrvdservice.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

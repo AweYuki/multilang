@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.backup",
+  "apkName": "Backup.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

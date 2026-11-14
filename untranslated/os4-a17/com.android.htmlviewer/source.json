@@ -1,0 +1,9 @@
+{
+  "package": "com.android.htmlviewer",
+  "apkName": "HTMLViewer.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

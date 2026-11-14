@@ -1,0 +1,7 @@
+{
+  "package": "com.xiaomi.metoknlp",
+  "apkName": "MetokNLP.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

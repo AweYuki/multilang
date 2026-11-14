@@ -1,0 +1,9 @@
+{
+  "package": "com.android.printspooler",
+  "apkName": "MiuiPrintSpooler.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

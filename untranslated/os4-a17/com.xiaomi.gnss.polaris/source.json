@@ -1,0 +1,7 @@
+{
+  "package": "com.xiaomi.gnss.polaris",
+  "apkName": "Polaris.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

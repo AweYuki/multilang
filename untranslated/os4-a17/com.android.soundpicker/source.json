@@ -1,0 +1,7 @@
+{
+  "package": "com.android.soundpicker",
+  "apkName": "SoundPicker.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

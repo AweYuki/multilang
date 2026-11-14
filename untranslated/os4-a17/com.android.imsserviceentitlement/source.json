@@ -1,0 +1,9 @@
+{
+  "package": "com.android.imsserviceentitlement",
+  "apkName": "ImsServiceEntitlement.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

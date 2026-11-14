@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.yellowpage",
+  "apkName": "MIUIYellowPage.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

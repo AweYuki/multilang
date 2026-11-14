@@ -1,0 +1,8 @@
+{
+  "package": "com.miuix.editor",
+  "apkName": "MiuixEditor.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "package": "com.google.android.gms.location.history",
+  "apkName": "GoogleLocationHistory.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

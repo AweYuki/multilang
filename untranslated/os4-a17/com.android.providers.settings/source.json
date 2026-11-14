@@ -1,0 +1,8 @@
+{
+  "package": "com.android.providers.settings",
+  "apkName": "SettingsProvider.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

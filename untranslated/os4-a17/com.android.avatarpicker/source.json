@@ -1,0 +1,8 @@
+{
+  "package": "com.android.avatarpicker",
+  "apkName": "AvatarPicker.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

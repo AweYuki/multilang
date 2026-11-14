@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.packageinstaller",
+  "apkName": "MIUIPackageInstaller.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

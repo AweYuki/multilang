@@ -1,0 +1,7 @@
+{
+  "package": "com.qti.dcf",
+  "apkName": "dcf.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

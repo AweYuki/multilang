@@ -1,0 +1,7 @@
+{
+  "package": "com.android.providers.contactkeys",
+  "apkName": "E2eeContactKeysProvider.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

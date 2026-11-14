@@ -1,0 +1,7 @@
+{
+  "package": "com.miui.systemAdSolution",
+  "apkName": "MSA.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

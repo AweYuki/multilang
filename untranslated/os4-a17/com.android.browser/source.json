@@ -1,0 +1,9 @@
+{
+  "package": "com.android.browser",
+  "apkName": "MIUIBrowser.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

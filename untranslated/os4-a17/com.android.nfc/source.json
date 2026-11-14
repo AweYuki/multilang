@@ -1,0 +1,8 @@
+{
+  "package": "com.android.nfc",
+  "apkName": "Nfc_st.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

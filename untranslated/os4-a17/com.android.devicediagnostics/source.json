@@ -1,0 +1,8 @@
+{
+  "package": "com.android.devicediagnostics",
+  "apkName": "DeviceDiagnostics.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

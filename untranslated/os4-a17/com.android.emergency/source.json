@@ -1,0 +1,9 @@
+{
+  "package": "com.android.emergency",
+  "apkName": "EmergencyInfo.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.mediaviewer",
+  "apkName": "MediaViewer.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

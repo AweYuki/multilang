@@ -1,0 +1,8 @@
+{
+  "package": "com.qualcomm.qti.powersavemode",
+  "apkName": "PowerSaveMode.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

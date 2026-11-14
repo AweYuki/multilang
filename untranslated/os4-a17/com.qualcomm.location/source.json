@@ -1,0 +1,7 @@
+{
+  "package": "com.qualcomm.location",
+  "apkName": "com.qualcomm.location.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

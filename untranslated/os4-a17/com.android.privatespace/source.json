@@ -1,0 +1,7 @@
+{
+  "package": "com.android.privatespace",
+  "apkName": "PrivateSpace.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "package": "vendor.qti.bluetooth.xpan",
+  "apkName": "Xpan.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

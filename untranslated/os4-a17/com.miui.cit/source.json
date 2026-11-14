@@ -1,0 +1,8 @@
+{
+  "package": "com.miui.cit",
+  "apkName": "MiuiCit.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

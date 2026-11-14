@@ -1,0 +1,9 @@
+{
+  "package": "com.xiaomi.type",
+  "apkName": "MiType.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "package": "com.android.quicksearchbox",
+  "apkName": "MIUIQuickSearchBox.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

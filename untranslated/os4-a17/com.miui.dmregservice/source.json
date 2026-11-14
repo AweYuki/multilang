@@ -1,0 +1,8 @@
+{
+  "package": "com.miui.dmregservice",
+  "apkName": "RegService.apk",
+  "files": [
+    "strings.xml",
+    "plurals.xml"
+  ]
+}

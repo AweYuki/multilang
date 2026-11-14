@@ -1,0 +1,7 @@
+{
+  "package": "com.qti.ltebc",
+  "apkName": "QAS_DVC_MSP.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

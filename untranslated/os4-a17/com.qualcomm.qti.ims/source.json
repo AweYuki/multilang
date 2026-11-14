@@ -1,0 +1,8 @@
+{
+  "package": "com.qualcomm.qti.ims",
+  "apkName": "imssettings.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "package": "com.sohu.inputmethod.sogou.xiaomi",
+  "apkName": "SogouIME.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

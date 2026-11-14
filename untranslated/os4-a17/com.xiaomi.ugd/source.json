@@ -1,0 +1,7 @@
+{
+  "package": "com.xiaomi.ugd",
+  "apkName": "com.xiaomi.ugd.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

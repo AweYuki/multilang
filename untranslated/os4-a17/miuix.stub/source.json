@@ -1,0 +1,9 @@
+{
+  "package": "miuix.stub",
+  "apkName": "miuix.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "package": "com.google.android.configupdater",
+  "apkName": "ConfigUpdater.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

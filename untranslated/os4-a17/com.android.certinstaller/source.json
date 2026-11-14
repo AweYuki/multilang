@@ -1,0 +1,8 @@
+{
+  "package": "com.android.certinstaller",
+  "apkName": "CertInstaller.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "package": "com.google.android.ext.shared",
+  "apkName": "GoogleExtShared.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

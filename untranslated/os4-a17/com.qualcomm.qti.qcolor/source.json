@@ -1,0 +1,7 @@
+{
+  "package": "com.qualcomm.qti.qcolor",
+  "apkName": "QColor.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

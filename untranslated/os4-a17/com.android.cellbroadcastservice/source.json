@@ -1,0 +1,8 @@
+{
+  "package": "com.android.cellbroadcastservice",
+  "apkName": "CellBroadcastServiceModulePlatform.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

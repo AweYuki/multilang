@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.misightservice",
+  "apkName": "MiSightService.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

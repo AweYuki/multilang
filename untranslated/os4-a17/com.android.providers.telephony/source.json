@@ -1,0 +1,8 @@
+{
+  "package": "com.android.providers.telephony",
+  "apkName": "TelephonyProvider.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

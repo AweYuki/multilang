@@ -1,0 +1,7 @@
+{
+  "package": "com.miui.vsimcore",
+  "apkName": "VsimCore.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "package": "com.xiaomi.apn",
+  "apkName": "CarrierStudioApn.apk",
+  "files": [
+    "arrays.xml"
+  ]
+}

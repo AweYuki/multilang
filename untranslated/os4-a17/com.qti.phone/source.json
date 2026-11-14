@@ -1,0 +1,8 @@
+{
+  "package": "com.qti.phone",
+  "apkName": "QtiTelephony.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

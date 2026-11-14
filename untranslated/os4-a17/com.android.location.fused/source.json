@@ -1,0 +1,7 @@
+{
+  "package": "com.android.location.fused",
+  "apkName": "FusedLocation.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

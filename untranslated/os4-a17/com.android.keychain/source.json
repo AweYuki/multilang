@@ -1,0 +1,8 @@
+{
+  "package": "com.android.keychain",
+  "apkName": "KeyChain.apk",
+  "files": [
+    "strings.xml",
+    "plurals.xml"
+  ]
+}

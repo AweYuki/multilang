@@ -1,0 +1,9 @@
+{
+  "package": "com.xiaomi.aicr",
+  "apkName": "MIUIAICR.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

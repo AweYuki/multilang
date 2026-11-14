@@ -1,0 +1,7 @@
+{
+  "package": "com.android.shell",
+  "apkName": "Shell.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

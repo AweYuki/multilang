@@ -1,0 +1,7 @@
+{
+  "package": "com.miui.autoui.ext",
+  "apkName": "AutoUIExtension.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "package": "com.xiaomi.gamecenter.sdk.service",
+  "apkName": "MiGameCenterSDKService.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

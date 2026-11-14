@@ -1,0 +1,9 @@
+{
+  "package": "miui.systemui.plugin",
+  "apkName": "MIUISystemUIPlugin.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

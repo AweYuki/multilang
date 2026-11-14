@@ -1,0 +1,7 @@
+{
+  "package": "com.mobiletools.systemhelper",
+  "apkName": "SystemHelper.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

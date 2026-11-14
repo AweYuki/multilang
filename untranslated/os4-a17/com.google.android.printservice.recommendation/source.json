@@ -1,0 +1,8 @@
+{
+  "package": "com.google.android.printservice.recommendation",
+  "apkName": "GooglePrintRecommendationService.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "package": "com.miui.wmsvc",
+  "apkName": "WMService.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

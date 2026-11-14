@@ -1,0 +1,7 @@
+{
+  "package": "com.android.mms.service",
+  "apkName": "MmsService.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

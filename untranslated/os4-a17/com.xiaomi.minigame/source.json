@@ -1,0 +1,9 @@
+{
+  "package": "com.xiaomi.minigame",
+  "apkName": "MiniGameService.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

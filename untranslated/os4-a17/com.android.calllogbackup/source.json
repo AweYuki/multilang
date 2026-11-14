@@ -1,0 +1,7 @@
+{
+  "package": "com.android.calllogbackup",
+  "apkName": "CallLogBackup.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

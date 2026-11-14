@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.contentextension",
+  "apkName": "MIUIContentExtension.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

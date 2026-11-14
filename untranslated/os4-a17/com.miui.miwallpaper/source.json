@@ -1,0 +1,8 @@
+{
+  "package": "com.miui.miwallpaper",
+  "apkName": "MiWallpaper.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "package": "com.android.apps.tag",
+  "apkName": "Tag.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

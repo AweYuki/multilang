@@ -1,0 +1,9 @@
+{
+  "package": "com.android.vpndialogs",
+  "apkName": "MiuiVpnDialogs.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

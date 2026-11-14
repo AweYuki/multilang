@@ -1,0 +1,7 @@
+{
+  "package": "com.android.captiveportallogin",
+  "apkName": "CaptivePortalLogin.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

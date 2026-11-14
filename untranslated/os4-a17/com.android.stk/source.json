@@ -1,0 +1,9 @@
+{
+  "package": "com.android.stk",
+  "apkName": "Stk.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "package": "com.xiaomi.xmsfkeeper",
+  "apkName": "XMSFKeeperCN.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

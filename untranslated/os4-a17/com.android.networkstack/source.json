@@ -1,0 +1,8 @@
+{
+  "package": "com.android.networkstack",
+  "apkName": "NetworkStack.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

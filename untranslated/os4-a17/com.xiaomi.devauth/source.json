@@ -1,0 +1,8 @@
+{
+  "package": "com.xiaomi.devauth",
+  "apkName": "MiDevAuthService.apk",
+  "files": [
+    "strings.xml",
+    "plurals.xml"
+  ]
+}

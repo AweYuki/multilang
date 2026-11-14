@@ -1,0 +1,9 @@
+{
+  "package": "com.android.provision",
+  "apkName": "Provision.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

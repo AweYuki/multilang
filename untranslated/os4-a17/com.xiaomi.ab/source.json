@@ -1,0 +1,7 @@
+{
+  "package": "com.xiaomi.ab",
+  "apkName": "system.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

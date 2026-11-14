@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.voicetrigger",
+  "apkName": "VoiceTrigger.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

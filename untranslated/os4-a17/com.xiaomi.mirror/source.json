@@ -1,0 +1,9 @@
+{
+  "package": "com.xiaomi.mirror",
+  "apkName": "MirrorOS4.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

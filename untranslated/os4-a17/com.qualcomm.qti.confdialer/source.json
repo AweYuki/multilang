@@ -1,0 +1,8 @@
+{
+  "package": "com.qualcomm.qti.confdialer",
+  "apkName": "ConferenceDialer.apk",
+  "files": [
+    "strings.xml",
+    "plurals.xml"
+  ]
+}

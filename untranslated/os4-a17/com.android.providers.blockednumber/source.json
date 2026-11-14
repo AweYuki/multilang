@@ -1,0 +1,7 @@
+{
+  "package": "com.android.providers.blockednumber",
+  "apkName": "BlockedNumberProvider.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

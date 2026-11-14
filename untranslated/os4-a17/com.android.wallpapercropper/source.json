@@ -1,0 +1,7 @@
+{
+  "package": "com.android.wallpapercropper",
+  "apkName": "WallpaperCropper.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

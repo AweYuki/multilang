@@ -1,0 +1,7 @@
+{
+  "package": "com.miui.contentcatcher",
+  "apkName": "ContentCatcherOS4.apk",
+  "files": [
+    "strings.xml"
+  ]
+}

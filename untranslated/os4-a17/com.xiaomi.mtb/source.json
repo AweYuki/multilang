@@ -1,0 +1,8 @@
+{
+  "package": "com.xiaomi.mtb",
+  "apkName": "ModemTestBox.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml"
+  ]
+}

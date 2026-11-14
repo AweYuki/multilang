@@ -1,0 +1,9 @@
+{
+  "package": "com.miui.extraphoto",
+  "apkName": "MiuiExtraPhoto.apk",
+  "files": [
+    "strings.xml",
+    "arrays.xml",
+    "plurals.xml"
+  ]
+}

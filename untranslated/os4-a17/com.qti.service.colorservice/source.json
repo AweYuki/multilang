@@ -1,0 +1,7 @@
+{
+  "package": "com.qti.service.colorservice",
+  "apkName": "colorservice.apk",
+  "files": [
+    "strings.xml"
+  ]
+}
