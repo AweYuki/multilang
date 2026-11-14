@@ -16,20 +16,37 @@ import xml.etree.ElementTree as ET
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_REPO_URL = "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-4.0-XML-Global.git"
 INVALID_QUALIFIER_RE = re.compile(r"(?:^|-)(?:mcc|mnc)\d{4,}(?:-|$)")
-NON_STRING_REF_RE = re.compile(r"@(?:drawable|mipmap|anim|layout)/")
+NON_STRING_REF_RE = re.compile(r"@(?!android:)([a-zA-Z0-9_]+)/([a-zA-Z0-9_.]+)")
 
 
 def sanitize_values_xml(res_dir: Path) -> None:
-    """Remove non-translatable entries referencing internal drawables/layouts."""
-    for xml_file in res_dir.glob("values*/**/*.xml"):
+    """Remove entries referencing internal resources not defined in this overlay."""
+    xml_files = sorted(res_dir.glob("values*/**/*.xml"))
+    parsed: list[tuple[Path, ET.ElementTree]] = []
+    defined: set[tuple[str, str]] = set()
+
+    for xml_file in xml_files:
         try:
             tree = ET.parse(xml_file)
         except ET.ParseError:
             continue
+        parsed.append((xml_file, tree))
+        for child in tree.getroot():
+            name = child.attrib.get("name")
+            if not name:
+                continue
+            tag = child.tag
+            if tag in ("string-array", "integer-array", "array"):
+                defined.add(("array", name))
+            else:
+                defined.add((tag, name))
+
+    for xml_file, tree in parsed:
         root = tree.getroot()
         changed = False
         for child in list(root):
-            if NON_STRING_REF_RE.search("".join(child.itertext())):
+            text = "".join(child.itertext())
+            if any((rtype, rname) not in defined for rtype, rname in NON_STRING_REF_RE.findall(text)):
                 root.remove(child)
                 changed = True
         if changed:

@@ -1386,12 +1386,6 @@ Ghi chú: Chỉ dành cho Ubuntu 8.04!"</item>
         <item>Thủ công</item>
         <item>Tự động định cấu hình proxy</item>
     </string-array>
-    <string-array name="wifi_security">
-        <item>@string/wifi_security_none</item>
-        <item>@string/wifi_security_wep</item>
-        <item>@string/wifi_security_psk_generic</item>
-        <item>@string/wifi_security_eap</item>
-    </string-array>
     <string-array name="wifi_signal">
         <item>Kém</item>
         <item>Kém</item>
