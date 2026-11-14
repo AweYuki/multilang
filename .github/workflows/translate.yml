@@ -34,12 +34,17 @@ on:
       batch_size:
         description: "Max strings per API request"
         required: false
-        default: "40"
+        default: "100"
+        type: string
+      max_batch_chars:
+        description: "Max characters per batch (API limit is 20000)"
+        required: false
+        default: "15000"
         type: string
       workers:
-        description: "Parallel translation workers (API max is 3)"
+        description: "Parallel translation workers"
         required: false
-        default: "3"
+        default: "8"
         type: string
 
 permissions:
@@ -71,14 +76,15 @@ jobs:
           MODEL: ${{ inputs.model }}
           TARGET_LANG: ${{ inputs.target_lang }}
           PACKAGES: ${{ inputs.packages }}
-          BATCH_SIZE: ${{ inputs.batch_size || '40' }}
-          WORKERS: ${{ inputs.workers || '3' }}
+          BATCH_SIZE: ${{ inputs.batch_size || '100' }}
+          MAX_BATCH_CHARS: ${{ inputs.max_batch_chars || '15000' }}
+          WORKERS: ${{ inputs.workers || '8' }}
         run: |
-          ARGS=(--version "$ROM_VERSION" --target "$TARGET_LANG" --model "$MODEL" --batch-size "$BATCH_SIZE" --workers "$WORKERS")
+          ARGS=(--version "$ROM_VERSION" --target "$TARGET_LANG" --model "$MODEL" --batch-size "$BATCH_SIZE" --max-batch-chars "$MAX_BATCH_CHARS" --workers "$WORKERS")
           if [ -n "$PACKAGES" ]; then
             ARGS+=(--packages "$PACKAGES")
           fi
-          python3 scripts/translate_strings.py "${ARGS[@]}"
+          python3 -u scripts/translate_strings.py "${ARGS[@]}"
 
       - name: Commit and push translated and remaining pending strings
         if: always()

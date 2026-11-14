@@ -193,7 +193,8 @@ def build_entry_batches(
 
     for idx in range(len(entries)):
         e_slots = slots_by_entry.get(idx, [])
-        e_chars = sum(len(s.text) for s in e_slots)
+        # Include ~14 chars overhead per slot for [[i]]...[[/i]]\n wrapper
+        e_chars = sum(len(s.text) + 14 for s in e_slots)
         if cur_indices and (
             len(cur_slots) + len(e_slots) > batch_size or cur_chars + e_chars > max_batch_chars
         ):
@@ -242,14 +243,18 @@ def translate_package(
         ensure_overlay_metadata(overlay_pkg_dir, pkg_name)
 
         batches = build_entry_batches(pending_entries, batch_size, max_batch_chars)
+        total_batches = len(batches)
+        completed_batches = 0
         remaining_map: dict[int, ET.Element] = {i: e for i, e in enumerate(pending_entries)}
         io_lock = threading.Lock()
         stop_event = threading.Event()
 
         def process_batch(batch: tuple[list[int], list[ET.Element], list[TextSlot]]) -> int:
+            nonlocal completed_batches
             indices, elems, slots = batch
             if stop_event.is_set():
                 return 0
+            batch_chars = sum(len(s.text) for s in slots)
             if slots:
                 translated_texts = translate_batch_texts(
                     [s.text for s in slots],
@@ -270,6 +275,12 @@ def translate_package(
                 write_resources_xml(
                     pending_xml,
                     [remaining_map[i] for i in sorted(remaining_map)],
+                )
+                completed_batches += 1
+                print(
+                    f"  [{pkg_name}] {xml_name}: batch {completed_batches}/{total_batches} "
+                    f"(+{len(elems)} entries, {batch_chars} chars) | remaining: {len(remaining_map)}",
+                    flush=True,
                 )
             return len(elems)
 
@@ -304,13 +315,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--target", default="vi", help="Target language (default: vi)")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="Model name (default: cx/gpt-6.1-sol)")
     parser.add_argument("--packages", default="", help="Comma-separated package names to translate")
-    parser.add_argument("--batch-size", type=int, default=40, help="Max strings per API request (default: 40)")
-    parser.add_argument("--max-batch-chars", type=int, default=4500, help="Max characters per batch (default: 4500)")
-    parser.add_argument("--workers", type=int, default=3, help="Parallel translation workers (default: 3)")
+    parser.add_argument("--batch-size", type=int, default=100, help="Max strings per API request (default: 100)")
+    parser.add_argument("--max-batch-chars", type=int, default=15000, help="Max characters per batch (default: 15000)")
+    parser.add_argument("--workers", type=int, default=8, help="Parallel translation workers (default: 8)")
     return parser.parse_args()
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(line_buffering=True)
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(line_buffering=True)
+
     args = parse_args()
     if not args.token:
         print("Error: missing API token. Set TRANSLATE_API_TOKEN or pass --token.", file=sys.stderr)
@@ -332,10 +348,12 @@ def main() -> int:
         return 0
 
     total_translated = 0
-    for pkg_dir in pkg_dirs:
+    total_pkgs = len(pkg_dirs)
+    for idx, pkg_dir in enumerate(pkg_dirs, start=1):
         print(
-            f"[TRANSLATE] {args.version}/{pkg_dir.name} "
-            f"(model={args.model}, batch={args.batch_size}, workers={args.workers}) ..."
+            f"[TRANSLATE {idx}/{total_pkgs}] {args.version}/{pkg_dir.name} "
+            f"(model={args.model}, batch={args.batch_size}, max_chars={args.max_batch_chars}, workers={args.workers}) ...",
+            flush=True,
         )
         try:
             count = translate_package(
