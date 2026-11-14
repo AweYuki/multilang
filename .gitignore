@@ -1,0 +1,9 @@
+build/
+dist/
+out/
+*.keystore
+*.jks
+*.idsig
+__pycache__/
+*.pyc
+.DS_Store

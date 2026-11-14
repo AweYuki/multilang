@@ -1,0 +1,8 @@
+{
+  "compileSdk": 35,
+  "minSdk": 33,
+  "targetSdk": 35,
+  "overlayPackagePrefix": "com.aweyuki.multilang",
+  "defaultPriority": 100,
+  "defaultIsStatic": true
+}
