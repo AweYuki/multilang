@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.networkstack.tethering",
+  "priority": 100,
+  "isStatic": true
+}

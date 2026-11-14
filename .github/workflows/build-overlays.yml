@@ -109,26 +109,35 @@ jobs:
             echo "KEYSTORE_PATH=build/release.keystore" >> "$GITHUB_ENV"
           fi
 
-      - name: Sync Xiaomi.eu XML source (when selected)
+      - name: Sync Xiaomi.eu XML source (when needed)
+        id: xiaomi_eu
         if: ${{ contains(inputs.string_source || 'repo', 'xiaomi-eu') }}
         env:
           LANGUAGE_MODE: ${{ inputs.language_mode || 'vi' }}
           TARGET_VERSION: ${{ (inputs.version && inputs.version != 'all') && inputs.version || 'os4-a17' }}
           XIAOMI_EU_REPO: ${{ inputs.xiaomi_eu_repo || 'https://github.com/ingbrzy/Xiaomi.eu-HyperOS-4.0-XML-Global.git' }}
         run: |
-          SYNC_LANG="Vietnamese"
-          if [ "$LANGUAGE_MODE" = "all" ]; then
-            SYNC_LANG="all"
+          DEFAULT_REPO="https://github.com/ingbrzy/Xiaomi.eu-HyperOS-4.0-XML-Global.git"
+          if [ "$LANGUAGE_MODE" = "vi" ] && [ "$XIAOMI_EU_REPO" = "$DEFAULT_REPO" ] && [ -d "sources/xiaomi-eu/${TARGET_VERSION}" ]; then
+            echo "Using pre-synced sources/xiaomi-eu/${TARGET_VERSION} from repo."
+            echo "dir=sources/xiaomi-eu" >> "$GITHUB_OUTPUT"
+          else
+            SYNC_LANG="Vietnamese"
+            if [ "$LANGUAGE_MODE" = "all" ]; then
+              SYNC_LANG="all"
+            fi
+            python3 scripts/sync_xml.py \
+              --repo-url "$XIAOMI_EU_REPO" \
+              --overlays-dir /tmp/xiaomi-eu-overlays \
+              --version "$TARGET_VERSION" \
+              --lang "$SYNC_LANG"
+            echo "dir=/tmp/xiaomi-eu-overlays" >> "$GITHUB_OUTPUT"
           fi
-          python3 scripts/sync_xml.py \
-            --repo-url "$XIAOMI_EU_REPO" \
-            --overlays-dir /tmp/xiaomi-eu-overlays \
-            --version "$TARGET_VERSION" \
-            --lang "$SYNC_LANG"
 
       - name: Build overlay APKs
         env:
           STRING_SOURCE: ${{ inputs.string_source || 'repo' }}
+          XIAOMI_EU_DIR: ${{ steps.xiaomi_eu.outputs.dir || 'sources/xiaomi-eu' }}
           ROM_VERSION: ${{ inputs.version || 'all' }}
           LANGUAGE_MODE: ${{ inputs.language_mode || 'vi' }}
           ONLY_OVERLAYS: ${{ inputs.overlays || '' }}
@@ -143,13 +152,13 @@ jobs:
               ARGS+=(--overlays-dir overlays)
               ;;
             xiaomi-eu)
-              ARGS+=(--overlays-dir /tmp/xiaomi-eu-overlays)
+              ARGS+=(--overlays-dir "$XIAOMI_EU_DIR")
               ;;
             xiaomi-eu+repo)
-              ARGS+=(--overlays-dir /tmp/xiaomi-eu-overlays --fallback-dir overlays)
+              ARGS+=(--overlays-dir "$XIAOMI_EU_DIR" --fallback-dir overlays)
               ;;
             repo+xiaomi-eu)
-              ARGS+=(--overlays-dir overlays --fallback-dir /tmp/xiaomi-eu-overlays)
+              ARGS+=(--overlays-dir overlays --fallback-dir "$XIAOMI_EU_DIR")
               ;;
             custom)
               ARGS+=(--overlays-dir sources/custom)

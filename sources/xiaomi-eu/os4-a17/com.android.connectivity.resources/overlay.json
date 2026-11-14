@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.android.connectivity.resources",
+  "priority": 100,
+  "isStatic": true
+}

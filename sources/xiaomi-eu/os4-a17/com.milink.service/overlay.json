@@ -1,0 +1,5 @@
+{
+  "targetPackage": "com.milink.service",
+  "priority": 100,
+  "isStatic": true
+}
