@@ -1824,7 +1824,6 @@ Tất cả các mục cá nhân hóa hiện đang được sử dụng trên thi
     <string name="advanced_customize_mode">Tùy chỉnh nâng cao</string>
     <string name="alarm_sound">Báo thức</string>
     <string name="all_wallpapers">Tất cả hình nền</string>
-    <string name="Màn hình luôn bật_screen">Always-on display</string>
     <string name="app_description_content">Chủ đề là ứng dụng hệ thống. Ứng dụng cung cấp hình nền và nhiều tùy chọn cá nhân. Bạn sẽ vẫn có thể sử dụng Chủ đề qua Cài đặt sau khi xóa lối tắt Màn hình chính.</string>
     <string name="app_description_title">Xóa \"Chủ đề\" khỏi Màn hình chính?</string>
     <string name="applied_success_contine">Tiếp tục duyệt</string>

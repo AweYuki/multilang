@@ -17,6 +17,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_REPO_URL = "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-4.0-XML-Global.git"
 INVALID_QUALIFIER_RE = re.compile(r"(?:^|-)(?:mcc|mnc)\d{4,}(?:-|$)")
 NON_STRING_REF_RE = re.compile(r"@(?!android:)([a-zA-Z0-9_]+)/([a-zA-Z0-9_.]+)")
+VALID_ENTRY_NAME_RE = re.compile(r"^[a-zA-Z0-9_.]+$")
 
 
 def sanitize_values_xml(res_dir: Path) -> None:
@@ -45,6 +46,11 @@ def sanitize_values_xml(res_dir: Path) -> None:
         root = tree.getroot()
         changed = False
         for child in list(root):
+            name = child.attrib.get("name")
+            if name and not VALID_ENTRY_NAME_RE.match(name):
+                root.remove(child)
+                changed = True
+                continue
             text = "".join(child.itertext())
             if any((rtype, rname) not in defined for rtype, rname in NON_STRING_REF_RE.findall(text)):
                 root.remove(child)
