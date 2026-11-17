@@ -258,16 +258,35 @@ def run_cmd(cmd: list[str], label: str) -> None:
         raise RuntimeError(f"{label} failed (exit {proc.returncode}):\n{proc.stdout.strip()}")
 
 
+LANG_PATTERNS = {
+    "vi": re.compile(r"(?:^|-)vi(?:-|$)"),
+    "en": re.compile(r"(?:^|-)en(?:-|$)"),
+}
+
+
+def should_include_res_dir(name: str, lang_mode: str) -> bool:
+    if lang_mode == "all":
+        return True
+    pattern = LANG_PATTERNS.get(lang_mode)
+    return bool(pattern and pattern.search(name))
+
+
+def has_matching_res(res_dir: Path, fallback_res_dir: Path | None, lang_mode: str) -> bool:
+    for candidate in (res_dir, fallback_res_dir):
+        if candidate and candidate.is_dir():
+            if any(c.is_dir() and should_include_res_dir(c.name, lang_mode) for c in candidate.iterdir()):
+                return True
+    return False
+
+
 def stage_res_dir(
     res_dir: Path,
     fallback_res_dir: Path | None,
     work_dir: Path,
     lang_mode: str,
 ) -> Path:
-    vi_pattern = re.compile(r"(?:^|-)vi(?:-|$)")
-
     def should_include(name: str) -> bool:
-        return lang_mode == "all" or bool(vi_pattern.search(name))
+        return should_include_res_dir(name, lang_mode)
 
     if fallback_res_dir is None and lang_mode == "all":
         return res_dir
@@ -437,9 +456,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--lang-mode",
-        choices=["vi", "all"],
+        choices=["vi", "en", "all"],
         default="all",
-        help="Language build mode: 'vi' (Vietnamese only) or 'all' (all languages in res/)",
+        help="Language build mode: 'vi' (Vietnamese), 'en' (English), or 'all' (all languages in res/)",
     )
     parser.add_argument(
         "--validate-only",
@@ -477,7 +496,7 @@ def main() -> int:
     else:
         version_names = [v.strip() for v in args.version.split(",") if v.strip()]
 
-    apk_label = "vietnamese" if args.lang_mode == "vi" else "multilang"
+    apk_label = {"vi": "vietnamese", "en": "english"}.get(args.lang_mode, "multilang")
     tasks: list[tuple[str, Path, Path | None, dict, Path, Path, str]] = []
     for ver in version_names:
         ver_dir = args.overlays_dir / ver
@@ -503,9 +522,18 @@ def main() -> int:
         if args.only.strip():
             wanted = {item.strip() for item in args.only.split(",") if item.strip()}
             pkg_names = [n for n in pkg_names if n in wanted]
+        pkg_names = [
+            n
+            for n in pkg_names
+            if has_matching_res(
+                pkg_map[n][0] / "res",
+                (pkg_map[n][1] / "res") if pkg_map[n][1] else None,
+                args.lang_mode,
+            )
+        ]
         if not pkg_names:
             if args.version != "all":
-                print(f"[SKIP] No overlays found in {ver_dir}")
+                print(f"[SKIP] No matching ({args.lang_mode}) overlays found in {ver_dir}")
             continue
 
         ver_config = dict(config)

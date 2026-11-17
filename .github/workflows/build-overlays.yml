@@ -53,10 +53,11 @@ on:
         required: true
         default: "all"
       language_mode:
-        description: "Language mode: 'vi' (Vietnamese only) or 'all' (sync & build all languages)"
+        description: "Language mode: 'vi' (Vietnamese), 'en' (English), or 'all' (sync & build all languages)"
         type: choice
         options:
           - vi
+          - en
           - all
         required: true
         default: "vi"
@@ -114,25 +115,67 @@ jobs:
         if: ${{ contains(inputs.string_source || 'repo', 'xiaomi-eu') }}
         env:
           LANGUAGE_MODE: ${{ inputs.language_mode || 'vi' }}
-          TARGET_VERSION: ${{ (inputs.version && inputs.version != 'all') && inputs.version || 'os4-a17' }}
+          TARGET_VERSION: ${{ inputs.version || 'all' }}
           XIAOMI_EU_REPO: ${{ inputs.xiaomi_eu_repo || 'https://github.com/ingbrzy/Xiaomi.eu-HyperOS-4.0-XML-Global.git' }}
         run: |
+          set -euo pipefail
           DEFAULT_REPO="https://github.com/ingbrzy/Xiaomi.eu-HyperOS-4.0-XML-Global.git"
-          if [ "$LANGUAGE_MODE" = "vi" ] && [ "$XIAOMI_EU_REPO" = "$DEFAULT_REPO" ] && [ -d "sources/xiaomi-eu/${TARGET_VERSION}" ]; then
-            echo "Using pre-synced sources/xiaomi-eu/${TARGET_VERSION} from repo."
+          if [ "$LANGUAGE_MODE" = "vi" ] && [ "$XIAOMI_EU_REPO" = "$DEFAULT_REPO" ] && { [ "$TARGET_VERSION" = "all" ] || [ -d "sources/xiaomi-eu/${TARGET_VERSION}" ]; }; then
+            echo "Using pre-synced sources/xiaomi-eu (${TARGET_VERSION}) from repo."
             echo "dir=sources/xiaomi-eu" >> "$GITHUB_OUTPUT"
-          else
-            SYNC_LANG="Vietnamese"
-            if [ "$LANGUAGE_MODE" = "all" ]; then
-              SYNC_LANG="all"
-            fi
-            python3 scripts/sync_xml.py \
-              --repo-url "$XIAOMI_EU_REPO" \
-              --overlays-dir /tmp/xiaomi-eu-overlays \
-              --version "$TARGET_VERSION" \
-              --lang "$SYNC_LANG"
-            echo "dir=/tmp/xiaomi-eu-overlays" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+
+          case "$LANGUAGE_MODE" in
+            vi) SYNC_LANG="Vietnamese" ;;
+            en) SYNC_LANG="English" ;;
+            all) SYNC_LANG="all" ;;
+          esac
+
+          sync_ver() {
+            local ver="$1"
+            local repo="$2"
+            local variants="$3"
+            echo "Syncing ${ver} (${SYNC_LANG}) from ${repo} [${variants}]..."
+            python3 scripts/sync_xml.py \
+              --repo-url "$repo" \
+              --overlays-dir /tmp/xiaomi-eu-overlays \
+              --version "$ver" \
+              --variants "$variants" \
+              --lang "$SYNC_LANG"
+          }
+
+          if [ "$XIAOMI_EU_REPO" != "$DEFAULT_REPO" ]; then
+            ver="${TARGET_VERSION}"
+            [ "$ver" = "all" ] && ver="os4-a17"
+            sync_ver "$ver" "$XIAOMI_EU_REPO" "qcom-sdk37,mtk-sdk37"
+          else
+            if { [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "miui14" ]; } && [ "$SYNC_LANG" != "English" ]; then
+              sync_ver "miui14" "https://github.com/butinhi/MIUI-14-XML-Vietnamese.git" "."
+            fi
+            if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os1-a13" ]; then
+              sync_ver "os1-a13" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-1.0-XML-Global.git" "qcom-sdk33,mtk-sdk33"
+            fi
+            if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os1-a14" ]; then
+              sync_ver "os1-a14" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-1.0-XML-Global.git" "qcom-sdk34,mtk-sdk34"
+            fi
+            if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os2-a14" ]; then
+              sync_ver "os2-a14" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-2.0-XML-Global.git" "qcom-sdk34,mtk-sdk34"
+            fi
+            if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os2-a15" ]; then
+              sync_ver "os2-a15" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-2.0-XML-Global.git" "qcom-sdk35,mtk-sdk35"
+            fi
+            if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os3-a15" ]; then
+              sync_ver "os3-a15" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-3.0-XML-Global.git" "qcom-sdk35"
+            fi
+            if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os3-a16" ]; then
+              sync_ver "os3-a16" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-3.0-XML-Global.git" "qcom-sdk36,mtk-sdk36"
+            fi
+            if [ "$TARGET_VERSION" = "all" ] || [ "$TARGET_VERSION" = "os4-a17" ]; then
+              sync_ver "os4-a17" "https://github.com/ingbrzy/Xiaomi.eu-HyperOS-4.0-XML-Global.git" "qcom-sdk37,mtk-sdk37"
+            fi
+          fi
+          echo "dir=/tmp/xiaomi-eu-overlays" >> "$GITHUB_OUTPUT"
 
       - name: Build overlay APKs
         env:
